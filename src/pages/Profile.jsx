@@ -219,7 +219,7 @@ function Profile() {
             <div className="flex flex-col sm:flex-row gap-4">
               <input
                 type="text"
-                placeholder="Enter referral code"
+                placeholder="Enter referal code"
                 value={refCode}
                 onChange={(e) => setRefCode(e.target.value.toUpperCase())}
                 className="flex-1 px-5 py-3 rounded-xl bg-white/5 text-white border border-gray-700 outline-none focus:border-red-500 focus:bg-white/10 transition"
