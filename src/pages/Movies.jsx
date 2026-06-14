@@ -176,7 +176,7 @@ function Movies() {
         {!loading && !error && moviesToRender.length === 0 && (
           <div className="text-center py-20">
             <p className="text-gray-400 text-lg">
-              No movies found matching your search or filters.
+              No movies found please try different search terms or filters.
             </p>
           </div>
         )}
