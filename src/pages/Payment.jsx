@@ -175,7 +175,7 @@ function Payment() {
       const scriptLoaded = await loadRazorpayScript();
 
       if (!scriptLoaded) {
-        throw new Error("Unable to load Razorpay checkout script.");
+        throw new Error("Unable to load Razorpay please checkout script.");
       }
 
       // proceed to Razorpay checkout only
