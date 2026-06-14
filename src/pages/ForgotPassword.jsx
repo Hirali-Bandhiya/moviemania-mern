@@ -21,7 +21,7 @@ function ForgotPassword() {
 
     try {
       const result = await forgotPasswordApi({ email: email.trim() });
-      setMessage(result?.message || "OTP sent to email");
+      setMessage(result?.message || "OTP sent to an email");
       setStep("otp");
     } catch (err) {
       setError(err.message || "Unable to send reset email");
