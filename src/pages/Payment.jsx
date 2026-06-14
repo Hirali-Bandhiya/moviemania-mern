@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
-import { getCurrentUser, logout } from "../utils/auth";
+import { getCurrentUser, updateCurrentUser, logout, clearCheckoutPending, isCheckoutPending } from "../utils/auth";
 import {
   clearPendingPlanSelection,
   normalizePlanSelection,
@@ -67,7 +67,7 @@ function Payment() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const movieId = location.state?.movieId;
-  const redirectAfterPayment = location.state?.redirectAfterPayment;
+  const paymentOrigin = location.state?.paymentOrigin || (isCheckoutPending() ? "guest" : (getCurrentUser() ? "subscription" : "guest"));
   const [planSelection, setPlanSelection] = useState(() =>
     readPendingPlanSelection(location.state?.plan || new URLSearchParams(location.search).get("plan"))
   );
@@ -125,12 +125,6 @@ function Payment() {
     setCheckoutGlow(true);
 
     try {
-      const scriptLoaded = await loadRazorpayScript();
-
-      if (!scriptLoaded) {
-        throw new Error("Unable to load Razorpay checkout script.");
-      }
-
       const currentUser = getCurrentUser();
 
       const { data } = await api.post("/payment/create-order", {
@@ -146,7 +140,7 @@ function Payment() {
         if (isLocal) {
           console.warn("Invalid payment init response — using local mock fallback.", data);
           const mockPaymentId = `pay_mock_${Date.now()}`;
-          await verifyPayment({
+          const paymentResult = await verifyPayment({
             orderId: `order_mock_${Date.now()}`,
             paymentId: mockPaymentId,
             signature: null,
@@ -154,17 +148,34 @@ function Payment() {
             plan: selectedPlan,
           });
 
-          setSuccessMessage("(Local) Payment successful. Redirecting to login...");
+          if (paymentResult?.user) {
+            updateCurrentUser(paymentResult.user);
+          }
+
+          setSuccessMessage("(Local) Payment successful. Subscription activated.");
           setLoading(false);
           setTimeout(() => {
             clearPendingPlanSelection();
-            logout();
-            navigate("/login", { replace: true, state: { movieId, redirectAfterPayment } });
+            clearCheckoutPending();
+            if (paymentOrigin === "guest") {
+              logout();
+              navigate("/login", { replace: true });
+            } else if (movieId) {
+              navigate(`/movie/${movieId}`, { replace: true });
+            } else {
+              navigate("/profile", { replace: true });
+            }
           }, SUCCESS_REDIRECT_DELAY_MS);
           return;
         }
 
         throw new Error("Payment initialization failed: invalid server response.");
+      }
+
+      const scriptLoaded = await loadRazorpayScript();
+
+      if (!scriptLoaded) {
+        throw new Error("Unable to load Razorpay checkout script.");
       }
 
       // proceed to Razorpay checkout only
@@ -189,7 +200,7 @@ function Payment() {
         handler: async (response) => {
           try {
             console.log("Razorpay payment response:", response);
-            await verifyPayment({
+            const paymentResult = await verifyPayment({
               orderId: response.razorpay_order_id,
               paymentId: response.razorpay_payment_id,
               signature: response.razorpay_signature,
@@ -197,12 +208,24 @@ function Payment() {
               plan: selectedPlan,
             });
 
-            setSuccessMessage("Payment successful. Redirecting to login...");
+            // Refresh the cached user session so the active subscription is reflected immediately.
+            if (paymentResult?.user) {
+              updateCurrentUser(paymentResult.user);
+            }
+
+            setSuccessMessage("Payment successful. Subscription activated.");
             setLoading(false);
             setTimeout(() => {
               clearPendingPlanSelection();
-              logout();
-              navigate("/login", { replace: true, state: { movieId, redirectAfterPayment } });
+              clearCheckoutPending();
+              if (paymentOrigin === "guest") {
+                logout();
+                navigate("/login", { replace: true });
+              } else if (movieId) {
+                navigate(`/movie/${movieId}`, { replace: true });
+              } else {
+                navigate("/profile", { replace: true });
+              }
             }, SUCCESS_REDIRECT_DELAY_MS);
           } catch (error) {
             console.error("Payment verification failed:", error);

@@ -1,10 +1,16 @@
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { storePendingPlanSelection } from "../../../utils/planSelection";
+import { isLoggedIn } from "../../../utils/auth";
 
 function PlanCard({ plan }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleChoosePlan = () => {
+    const movieId = location.state?.movieId;
+    const paymentOrigin = location.state?.paymentOrigin || (isLoggedIn() ? "subscription" : "guest");
+
     const selectedPlan = storePendingPlanSelection({
       planId: plan.name,
       name: plan.name,
@@ -14,7 +20,13 @@ function PlanCard({ plan }) {
       description: plan.description,
     });
 
-    navigate(`/register`, { state: { plan: selectedPlan } });
+    // Logged-in users go straight to Razorpay checkout; guests keep the existing signup flow.
+    if (isLoggedIn()) {
+      navigate("/payment", { state: { plan: selectedPlan, movieId, paymentOrigin } });
+      return;
+    }
+
+    navigate(`/register`, { state: { plan: selectedPlan, movieId, paymentOrigin } });
   };
 
   return (
@@ -53,7 +65,7 @@ function PlanCard({ plan }) {
             : "bg-white/10 hover:bg-white/20 text-white hover:scale-[1.02]"
         }`}
       >
-        Choose Plan
+        Buy Plan
       </button>
     </div>
   );

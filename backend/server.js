@@ -52,14 +52,55 @@ app.use("/api/plans", plansRoutes);
 
 const Plan = require("./models/Plan");
 const WatchHistory = require("./models/WatchHistory");
+const User = require("./models/User");
+
+// Ensure admin user exists
+const ensureAdminExists = async () => {
+  try {
+    const adminEmail = "admin@gmail.com";
+    const adminPassword = "admin123";
+
+    let admin = await User.findOne({
+      $or: [{ email: adminEmail }, { isAdmin: true }],
+    });
+
+    if (!admin) {
+      admin = await User.create({
+        name: "Admin",
+        email: adminEmail,
+        password: adminPassword,
+        role: "Admin",
+        isAdmin: true,
+      });
+      console.log("✅ Admin user created successfully!");
+      console.log(`📧 Email: ${adminEmail}`);
+      console.log(`🔐 Password: ${adminPassword}`);
+    } else {
+      // Update existing admin with correct credentials
+      admin.name = "Admin";
+      admin.email = adminEmail;
+      admin.password = adminPassword;
+      admin.role = "Admin";
+      admin.isAdmin = true;
+      await admin.save();
+      console.log("✅ Admin user updated successfully!");
+    }
+  } catch (err) {
+    console.error("❌ Error ensuring admin user:", err.message);
+  }
+};
 
 // Connect MongoDB and start server only after successful DB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     return Promise.all([Plan.init(), WatchHistory.init()]);
   })
-  .then(() => {
+  .then(async () => {
     console.log("✅ MongoDB Connected");
+    
+    // Ensure admin user exists
+    await ensureAdminExists();
+    
     app.listen(PORT, () => {
       console.log(`✅ Server running on port ${PORT}`);
     });

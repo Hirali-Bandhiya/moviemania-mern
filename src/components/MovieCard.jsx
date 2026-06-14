@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { Star, Plus, Check, Play } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getImageUrl } from "../utils/imageHelper";
+import { isLoggedIn, hasActivePlan } from "../utils/auth";
+import { requiresSubscriptionForContent } from "../utils/accessControl";
 import {
   addToWatchlist,
   removeFromWatchlist,
@@ -24,6 +26,7 @@ function MovieCard({ movie, requirePlanForAccess = false, onRemoveFromContinue =
   const primaryImage = movie.image || movie.posterUrl;
   const imageUrl = imageError ? defaultImage : getImageUrl(primaryImage);
   const movieId = movie._id || movie.id;
+  const needsPlan = requiresSubscriptionForContent(movie);
 
   useEffect(() => {
     const watchlist = getWatchlist();
@@ -41,6 +44,16 @@ function MovieCard({ movie, requirePlanForAccess = false, onRemoveFromContinue =
       return;
     }
 
+    if (needsPlan && !hasActivePlan()) {
+      navigate("/plans", {
+        state: {
+          movieId,
+          paymentOrigin: isLoggedIn() ? "subscription" : "guest",
+        },
+      });
+      return;
+    }
+
     navigate(`/movie/${movieId}`);
   };
 
@@ -51,6 +64,17 @@ function MovieCard({ movie, requirePlanForAccess = false, onRemoveFromContinue =
       alert("Content not available");
       return;
     }
+
+    if (needsPlan && !hasActivePlan()) {
+      navigate("/plans", {
+        state: {
+          movieId,
+          paymentOrigin: isLoggedIn() ? "subscription" : "guest",
+        },
+      });
+      return;
+    }
+
     navigate(`/movie/${movieId}`);
   };
 

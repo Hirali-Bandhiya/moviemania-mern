@@ -8,6 +8,7 @@ import { getImageUrl } from "../utils/imageHelper";
 import { updateContinueWatching } from "../utils/continueWatching";
 import { resolvePlaybackUrl, resolveTrailerUrl } from "../utils/mediaResolver";
 import { isLoggedIn, hasActivePlan } from "../utils/auth";
+import { requiresSubscriptionForContent } from "../utils/accessControl";
 import {
   addToWishlistStore,
   removeFromWishlistStore,
@@ -83,6 +84,7 @@ function MovieDetails() {
 
   const detailMovie = { ...(localFallbackMovie || {}), ...(movie || {}) };
   const movieId = detailMovie?._id || detailMovie?.id || id;
+  const requiresPlan = requiresSubscriptionForContent(detailMovie);
 
   const defaultImage = "https://via.placeholder.com/300x400?text=No+Image";
   const imageUrl = imageError
@@ -113,6 +115,18 @@ function MovieDetails() {
     setIsUserLoggedIn(isLoggedIn());
     setUserHasActivePlan(hasActivePlan());
   }, []);
+
+  useEffect(() => {
+    if (!loading && requiresPlan && !hasActivePlan()) {
+      navigate("/plans", {
+        replace: true,
+        state: {
+          movieId,
+          paymentOrigin: isLoggedIn() ? "subscription" : "guest",
+        },
+      });
+    }
+  }, [loading, requiresPlan, movieId, navigate]);
 
   useEffect(() => {
     let active = true;
@@ -323,7 +337,7 @@ function MovieDetails() {
               <h2 className="text-3xl font-bold mb-8">Related Movies</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
                 {relatedMovies.map((item) => (
-                  <MovieCard key={item._id || item.id} movie={item} requirePlanForAccess />
+                  <MovieCard key={item._id || item.id} movie={item} requirePlanForAccess={item.requirePlanForAccess} />
                 ))}
               </div>
             </div>

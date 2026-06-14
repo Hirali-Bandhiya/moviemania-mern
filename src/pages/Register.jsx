@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { registerUser } from "../utils/auth";
+import { registerUser, markCheckoutPending } from "../utils/auth";
 import { readPendingPlanSelection } from "../utils/planSelection";
 
 function Register() {
@@ -8,7 +8,7 @@ function Register() {
   const location = useLocation();
   const selectedPlan = readPendingPlanSelection(location.state?.plan);
   const movieId = location.state?.movieId;
-  const redirectAfterPayment = location.state?.redirectAfterPayment;
+  const paymentOrigin = location.state?.paymentOrigin || "guest";
 
 
 
@@ -75,8 +75,9 @@ function Register() {
         setErrors({ email: result.message });
       } else {
         setRegisterSuccess("Registration successful. Redirecting to payment...");
+        markCheckoutPending();
         setForm({ name: "", email: "", password: "", confirmPassword: "" });
-        navigate("/payment", { state: { plan: selectedPlan, movieId, redirectAfterPayment } });
+        navigate("/payment", { state: { plan: selectedPlan, movieId, paymentOrigin } });
       }
 
       setLoading(false);

@@ -177,7 +177,7 @@ function Series() {
         ) : seriesToRender.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
             {seriesToRender.map(series => (
-              <MovieCard key={series._id || series.id} movie={series} requirePlanForAccess />
+              <MovieCard key={series._id || series.id} movie={series} requirePlanForAccess={series.requirePlanForAccess} />
             ))}
           </div>
         ) : (

@@ -12,11 +12,24 @@ const paymentSchema = new mongoose.Schema(
       ref: "User",
       default: null
     },
+    // Razorpay-specific fields are stored alongside the legacy names for backward compatibility.
+    razorpay_order_id: {
+      type: String,
+      default: null
+    },
+    razorpay_payment_id: {
+      type: String,
+      default: null
+    },
     guestName: {
       type: String,
       default: null
     },
     guestEmail: {
+      type: String,
+      default: null
+    },
+    planName: {
       type: String,
       default: null
     },
@@ -38,6 +51,10 @@ const paymentSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
+    subscriptionPlan: {
+      type: String,
+      default: null
+    },
     currency: {
       type: String,
       default: "INR"
@@ -57,6 +74,11 @@ const paymentSchema = new mongoose.Schema(
       default: null
     },
     status: {
+      type: String,
+      enum: ["Success", "Failed", "Pending", "Cancelled"],
+      default: "Success"
+    },
+    paymentStatus: {
       type: String,
       enum: ["Success", "Failed", "Pending", "Cancelled"],
       default: "Success"

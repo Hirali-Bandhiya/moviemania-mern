@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
+import PaymentHistory from "../features/PaymentHistory";
 import { getRecentlyWatched } from "../utils/history";
 import { getCurrentUser, logout, updateCurrentUser } from "../utils/auth";
 import { normalizePlanSelection } from "../utils/planSelection";
@@ -237,6 +238,9 @@ function Profile() {
               </p>
             )}
           </div>
+
+          {/* Payment History */}
+          <PaymentHistory />
 
         </div>
 

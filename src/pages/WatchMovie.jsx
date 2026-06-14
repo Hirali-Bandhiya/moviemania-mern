@@ -6,6 +6,7 @@ import MovieCard from "../components/MovieCard";
 import { getImageUrl } from "../utils/imageHelper";
 import { resolvePlaybackUrl, resolveTrailerUrl } from "../utils/mediaResolver";
 import { isLoggedIn, hasActivePlan } from "../utils/auth";
+import { requiresSubscriptionForContent } from "../utils/accessControl";
 import {
   addToWishlistStore,
   removeFromWishlistStore,
@@ -114,6 +115,7 @@ function WatchMovie() {
   });
   const detailMovie = { ...(localFallbackMovie || {}), ...(movie || {}) };
   const movieId = detailMovie._id || detailMovie.id;
+  const requiresPlan = requiresSubscriptionForContent(detailMovie);
   const playbackUrl = resolvePlaybackUrl(detailMovie, localFallbackMovie);
   // Don't use YouTube trailer as video fallback (won't work in video player)
   const fallbackPlaybackUrl = "";
@@ -148,6 +150,18 @@ function WatchMovie() {
     if (!movieId) return;
     setInUserWishlist(isInWishlistStore(movieId));
   }, [movieId]);
+
+  useEffect(() => {
+    if (!loading && requiresPlan && !hasActivePlan()) {
+      navigate("/plans", {
+        replace: true,
+        state: {
+          movieId,
+          paymentOrigin: isLoggedIn() ? "subscription" : "guest",
+        },
+      });
+    }
+  }, [loading, requiresPlan, movieId, navigate]);
 
   useEffect(() => {
     const primary = String(playbackUrl || "").trim();
@@ -354,7 +368,7 @@ function WatchMovie() {
             <h2 className="text-3xl font-bold mb-8">Related Movies</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
               {relatedMovies.map((item) => (
-                <MovieCard key={item._id || item.id} movie={item} requirePlanForAccess />
+                <MovieCard key={item._id || item.id} movie={item} requirePlanForAccess={item.requirePlanForAccess} />
               ))}
             </div>
           </div>

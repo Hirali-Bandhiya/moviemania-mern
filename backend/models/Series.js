@@ -50,6 +50,10 @@ const seriesSchema = new mongoose.Schema(
     director: {
       type: String,
     },
+      requirePlanForAccess: {
+        type: Boolean,
+        default: false,
+      },
   },
   { timestamps: true }
 );

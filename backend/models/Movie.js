@@ -35,6 +35,10 @@ const movieSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  requirePlanForAccess: {
+    type: Boolean,
+    default: false
+  },
   description: {
     type: String
   },

@@ -166,6 +166,18 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  subscriptionExpiryDate: {
+    type: Date,
+    default: null
+  },
+  subscriptionActive: {
+    type: Boolean,
+    default: false
+  },
+  subscriptionExpiry: {
+    type: Date,
+    default: null
+  },
   currentSubscription: {
     type: currentSubscriptionSchema,
     default: () => ({})

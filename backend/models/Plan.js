@@ -13,10 +13,23 @@ const planSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    planName: {
+      type: String,
+      default: null,
+      trim: true,
+    },
     description: {
       type: String,
       default: "",
       trim: true,
+    },
+    price: {
+      type: Number,
+      default: null,
+    },
+    duration: {
+      type: Number,
+      default: 30,
     },
     pricing: {
       monthly: {

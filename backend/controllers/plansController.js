@@ -74,12 +74,15 @@ const normalizePlanResponse = (plan) => {
     _id: plan._id,
     planCode: plan.planCode,
     name: plan.name,
+    planName: plan.name,
     description: plan.description || "",
     pricing: {
       monthly,
       yearly,
       currency: plan?.pricing?.currency || "INR",
     },
+    price: monthly,
+    duration: plan.duration || 30,
     features: Array.isArray(plan.features) ? plan.features : [],
     limits: plan.limits || {},
     active: Boolean(plan.active),
@@ -102,12 +105,15 @@ const buildPlanPayload = (body = {}, existingPlan = null) => {
   return {
     planCode,
     name,
+    planName: name,
     description: String(body.description || existingPlan?.description || "").trim(),
     pricing: {
       monthly,
       yearly: existingPlan?.pricing?.yearly ?? null,
       currency: body.currency || existingPlan?.pricing?.currency || "INR",
     },
+    price: monthly,
+    duration: parseNumber(body.duration, existingPlan?.duration || 30),
     features: Array.isArray(body.features)
       ? body.features
       : typeof body.features === "string"

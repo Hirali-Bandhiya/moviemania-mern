@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { loginUser, hasActivePlan } from "../utils/auth";
+import { loginUser } from "../utils/auth";
 
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const movieId = location.state?.movieId;
   const redirectAfterPayment = location.state?.redirectAfterPayment;
 
 
@@ -41,13 +40,12 @@ function Login() {
       if (!result.success) {
         setLoginError(result.message);
       } else {
-        // ✅ If coming from guest flow after payment, redirect to movie
-        if (redirectAfterPayment && movieId) {
-          navigate(`/movie/${movieId}`);
-        } else if (hasActivePlan()) {
-          navigate("/movies");
+        // Keep login landing on the user home page.
+        // The payment flow still sets this flag, but it should not send users to a movie detail page.
+        if (redirectAfterPayment) {
+          navigate("/");
         } else {
-          navigate("/plans");
+          navigate("/");
         }
       }
 

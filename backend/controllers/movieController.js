@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Movie = require("../models/Movie");
+const { decorateContentAccess } = require("../utils/accessControl");
 
 const isForbiddenDemoUrl = (url) => {
   const value = String(url || "").toLowerCase();
@@ -31,7 +32,7 @@ exports.getAllMovies = async (req, res) => {
       console.log("⚠️  No movies found in database", { filter });
     }
     
-    res.json(movies);
+    res.json(movies.map(decorateContentAccess));
   } catch (error) {
     console.error("Error fetching movies:", error);
     res.status(500).json({ 
@@ -57,7 +58,7 @@ exports.getMovieById = async (req, res) => {
       return res.status(404).json(null);
     }
 
-    res.json(movie);
+    res.json(decorateContentAccess(movie));
   } catch (error) {
     console.error("Error fetching movie:", error);
     res.status(500).json({ message: "Server error" });
@@ -79,7 +80,7 @@ exports.createMovie = async (req, res) => {
       videoUrl: movie.videoUrl || null,
       type: movie.type || null,
     });
-    res.status(201).json(movie);
+    res.status(201).json(decorateContentAccess(movie));
   } catch (error) {
     res.status(400).json({ message: "Invalid movie data", error: error.message });
   }
@@ -103,7 +104,7 @@ exports.updateMovie = async (req, res) => {
       type: movie.type || null,
     });
 
-    res.json(movie);
+    res.json(decorateContentAccess(movie));
   } catch (error) {
     res.status(400).json({ message: "Error updating movie", error: error.message });
   }

@@ -2,6 +2,7 @@ import { loginApi, paymentSuccessApi, registerApi } from "../services/authServic
 
 const TOKEN_KEY = "token";
 const USER_KEY = "currentUser";
+const CHECKOUT_PENDING_KEY = "checkoutPending";
 
 const safeParse = (value) => {
   try {
@@ -39,13 +40,28 @@ export const updateCurrentUser = (partial) => {
 export const logout = () => {
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(CHECKOUT_PENDING_KEY);
 };
+
+export const markCheckoutPending = () => {
+  localStorage.setItem(CHECKOUT_PENDING_KEY, "true");
+};
+
+export const clearCheckoutPending = () => {
+  localStorage.removeItem(CHECKOUT_PENDING_KEY);
+};
+
+export const isCheckoutPending = () => localStorage.getItem(CHECKOUT_PENDING_KEY) === "true";
 
 export const getCurrentUser = () => {
   return safeParse(localStorage.getItem(USER_KEY));
 };
 
 export const isLoggedIn = () => {
+  if (isCheckoutPending()) {
+    return false;
+  }
+
   const token = getAuthToken();
   const currentUser = getCurrentUser();
   // Backward compatibility: older sessions may store token on currentUser.
@@ -79,6 +95,9 @@ export const savePaymentStatus = async (plan) => {
       isPaid: data?.isPaid,
       plan: data?.plan,
       subscriptionPlan: data?.plan,
+      subscriptionActive: data?.subscriptionActive ?? true,
+      subscriptionExpiry: data?.subscriptionExpiry || data?.subscriptionExpiryDate || data?.subscriptionEndDate || null,
+      subscriptionExpiryDate: data?.subscriptionExpiryDate || data?.subscriptionExpiry || data?.subscriptionEndDate || null,
     });
     return { success: true, data };
   } catch (error) {
@@ -88,6 +107,8 @@ export const savePaymentStatus = async (plan) => {
 
 const getSubscriptionExpiry = (user) => {
   return (
+    user?.subscriptionExpiryDate ||
+    user?.subscriptionExpiry ||
     user?.subscriptionEndDate ||
     user?.currentSubscription?.expiresAt ||
     localStorage.getItem("subscriptionEndDate") ||
@@ -114,6 +135,11 @@ export const hasActivePlan = () => {
   const savedPlan = localStorage.getItem("subscriptionPlan");
   const paymentStatus = localStorage.getItem("paymentStatus");
   const expiryDate = getSubscriptionExpiry(user);
+
+  // Honor the backend subscription flag, but still expire access when the date is in the past.
+  if (user?.subscriptionActive === true && (isFutureDate(expiryDate) || !expiryDate)) {
+    return Boolean(user?.subscriptionPlan || user?.plan || savedPlan);
+  }
 
   if (isFutureDate(expiryDate)) {
     return Boolean(user?.subscriptionPlan || user?.plan || savedPlan);

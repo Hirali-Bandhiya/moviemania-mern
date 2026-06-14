@@ -114,7 +114,7 @@ export const createPaymentOrderApi = async ({ amount, planId, planName }) => {
 
 export const verifyPaymentApi = async (payload) => {
   try {
-    const { data } = await api.post("/.payment/verify", payload);
+    const { data } = await api.post("/payment/verify", payload);
     return data;
   } catch (error) {
     throw new Error(extractErrorMessage(error, "Payment verification failed"));

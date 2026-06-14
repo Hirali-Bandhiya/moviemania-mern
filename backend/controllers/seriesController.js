@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Series = require("../models/Series");
+const { decorateContentAccess } = require("../utils/accessControl");
 
 const isForbiddenDemoUrl = (url) => {
   const value = String(url || "").toLowerCase();
@@ -23,7 +24,7 @@ exports.getAllSeries = async (req, res) => {
       console.log("⚠️  No series found in database");
     }
 
-    res.json(series);
+    res.json(series.map(decorateContentAccess));
   } catch (error) {
     console.error("Error fetching series:", error);
     res.status(500).json({
@@ -47,7 +48,7 @@ exports.getSeriesById = async (req, res) => {
       return res.status(404).json(null);
     }
 
-    res.json(series);
+    res.json(decorateContentAccess(series));
   } catch (error) {
     console.error("Error fetching series by id:", error);
     res.status(500).json({ message: "Server error" });
@@ -62,7 +63,7 @@ exports.createSeries = async (req, res) => {
 
     const payload = { ...req.body, type: "series" };
     const series = await Series.create(payload);
-    res.status(201).json(series);
+    res.status(201).json(decorateContentAccess(series));
   } catch (error) {
     res.status(400).json({ message: "Invalid series data", error: error.message });
   }
@@ -77,7 +78,7 @@ exports.updateSeries = async (req, res) => {
     const payload = { ...req.body, type: "series" };
     const series = await Series.findByIdAndUpdate(req.params.id, payload, { new: true });
     if (!series) return res.status(404).json({ message: "Series not found" });
-    res.json(series);
+    res.json(decorateContentAccess(series));
   } catch (error) {
     res.status(400).json({ message: "Error updating series", error: error.message });
   }

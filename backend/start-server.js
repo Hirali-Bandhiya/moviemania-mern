@@ -72,6 +72,43 @@ app.use("/api/plans", plansRoutes);
 
 const Plan = require("./models/Plan");
 const WatchHistory = require("./models/WatchHistory");
+const User = require("./models/User");
+
+// Ensure admin user exists
+const ensureAdminExists = async () => {
+  try {
+    const adminEmail = "admin@gmail.com";
+    const adminPassword = "admin123";
+
+    let admin = await User.findOne({
+      $or: [{ email: adminEmail }, { isAdmin: true }],
+    });
+
+    if (!admin) {
+      admin = await User.create({
+        name: "Admin",
+        email: adminEmail,
+        password: adminPassword,
+        role: "Admin",
+        isAdmin: true,
+      });
+      console.log("✅ Admin user created successfully!");
+      console.log(`📧 Email: ${adminEmail}`);
+      console.log(`🔐 Password: ${adminPassword}`);
+    } else {
+      // Update existing admin with correct credentials
+      admin.name = "Admin";
+      admin.email = adminEmail;
+      admin.password = adminPassword;
+      admin.role = "Admin";
+      admin.isAdmin = true;
+      await admin.save();
+      console.log("✅ Admin user updated successfully!");
+    }
+  } catch (err) {
+    console.error("❌ Error ensuring admin user:", err.message);
+  }
+};
 
 // MongoDB Connection with retry logic
 const connectDB = async () => {
@@ -90,6 +127,9 @@ const connectDB = async () => {
       
       console.log("✅ MongoDB Connected successfully!");
       console.log(`📍 Connected to: ${process.env.MONGO_URI}`);
+      
+      // Ensure admin user exists
+      await ensureAdminExists();
       
       // Start server after successful DB connection
       app.listen(PORT, () => {

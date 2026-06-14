@@ -51,10 +51,14 @@ const syncUserSubscription = (user, planValue, planDoc, paymentRecord = null, su
   const planName = String(planValue || planDoc?.name || planDoc?.planCode || "Basic").trim();
   const currentStartedAt = user.currentSubscription?.startedAt || new Date();
 
+  // Keep legacy and Razorpay-ready subscription fields in sync.
   user.plan = planName;
   user.subscriptionPlan = planName;
   user.subscriptionStartDate = currentStartedAt;
   user.subscriptionEndDate = subscriptionEndDate || user.subscriptionEndDate || null;
+  user.subscriptionExpiryDate = subscriptionEndDate || user.subscriptionExpiryDate || null;
+  user.subscriptionActive = true;
+  user.subscriptionExpiry = subscriptionEndDate || user.subscriptionExpiry || null;
   user.isPaid = true;
   user.currentSubscription = {
     plan: planDoc?._id || user.currentSubscription?.plan || null,
@@ -197,15 +201,20 @@ exports.verifyPayment = async (req, res) => {
     const paymentRecord = await Payment.create({
       userId: user._id,
       user: user._id,
+      razorpay_order_id,
+      razorpay_payment_id,
       orderId: razorpay_order_id,
       paymentId: razorpay_payment_id,
       transactionId: razorpay_payment_id,
       amount: resolvedAmount,
+      subscriptionPlan: planDoc?.name || planName || "Basic",
       currency: planDoc?.pricing?.currency || "INR",
       plan: planDoc?.name || planName || "Basic",
+      planName: planDoc?.name || planName || "Basic",
       planRef: planDoc?._id || null,
       planId: planDoc?._id || null,
       status: "Success",
+      paymentStatus: "Success",
       paymentMethod: "Razorpay",
       paymentDate,
       transactionDate: paymentDate,
@@ -237,8 +246,24 @@ exports.verifyPayment = async (req, res) => {
         subscriptionPlan: user.subscriptionPlan,
         subscriptionStartDate: user.subscriptionStartDate,
         subscriptionEndDate: user.subscriptionEndDate,
+        subscriptionExpiryDate: user.subscriptionExpiryDate,
+        subscriptionActive: user.subscriptionActive,
+        subscriptionExpiry: user.subscriptionExpiry,
       },
     });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Get payments for the signed-in user
+exports.getMyPayments = async (req, res) => {
+  try {
+    const payments = await Payment.find({ userId: req.user._id })
+      .populate("user", "name email")
+      .sort({ paymentDate: -1, transactionDate: -1, createdAt: -1 });
+
+    res.json(payments);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -292,17 +317,22 @@ exports.createPaymentRecord = async (req, res) => {
     const newPayment = await Payment.create({
       userId: user || null,
       user: user || null,
+      razorpay_order_id: orderId,
+      razorpay_payment_id: paymentId,
       guestName: guestName || null,
       guestEmail: guestEmail || null,
       orderId,
       paymentId,
       transactionId: transactionId || paymentId,
       amount,
+      subscriptionPlan: plan,
+      planName: plan,
       currency: currency || "INR",
       plan,
       planId: planId || planDoc?._id || null,
       planRef: planDoc?._id || null,
       status: status || "Success",
+      paymentStatus: status || "Success",
       paymentMethod: paymentMethod || "Razorpay",
       description,
       paymentDate: paymentTimestamp,
