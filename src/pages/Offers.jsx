@@ -112,7 +112,7 @@ function Offers() {
               onClick={() => setFilter("latest")}
               className={`px-4 py-2 rounded-full font-bold text-sm transition-all ${filter === "latest" ? "bg-red-600 text-white" : "bg-white/10 text-gray-400 hover:bg-white/20"}`}
             >
-              Latest Offers
+              Latest Offer
             </button>
           </div>
 
