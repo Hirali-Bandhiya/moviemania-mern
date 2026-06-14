@@ -43,7 +43,7 @@ function EditProfile() {
       setMessage({ type: "success", text: "Profile updated successfully" });
       setTimeout(() => navigate("/profile"), 900);
     } catch (err) {
-      setMessage({ type: "error", text: err.message || "Update failed" });
+      setMessage({ type: "error", text: err.message || "Updated failed" });
     } finally {
       setLoading(false);
     }
