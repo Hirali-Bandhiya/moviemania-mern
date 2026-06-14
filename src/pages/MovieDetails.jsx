@@ -181,7 +181,7 @@ function MovieDetails() {
   if (!movie) {
     return (
       <div className="min-h-screen bg-black text-white p-20 text-center font-bold text-xl">
-        Movie/Series Not Found...
+        Movie/Series Not Founded...
       </div>
     );
   }
