@@ -22,7 +22,7 @@ function Login() {
     let newErrors = {};
 
     if (!form.email) newErrors.email = "Email cannot be blank.";
-    if (!form.password) newErrors.password = "Password cannot be blank.";
+    if (!form.password) newErrors.password = "Password cannot be a blank.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
