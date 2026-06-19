@@ -48,7 +48,7 @@ const calculateSubscriptionEndDate = (startDate = new Date()) => {
 };
 
 const syncUserSubscription = (user, planValue, planDoc, paymentRecord = null, subscriptionEndDate = null) => {
-  const planName = String(planValue || planDoc?.name || planDoc?.planCode || "Basic").trim();
+  const planName = String(planValue || planDoc?.name || planDoc?.planCode || "Basics").trim();
   const currentStartedAt = user.currentSubscription?.startedAt || new Date();
 
   // Keep legacy and Razorpay-ready subscription fields in sync.
