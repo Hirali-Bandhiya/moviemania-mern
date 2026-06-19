@@ -13,7 +13,7 @@ const seriesData = [
     videoUrl: "https://samplelib.com/lib/preview/mp4/sample-10s.mp4",
     type: "series",
     description: "A group of kids uncover supernatural secrets in a small town.",
-    director: "The Duffer Brothers",
+    director: "The Duffer's Brothers",
     cast: ["Millie Bobby Brown", "Finn Wolfhard", "David Harbour"],
   },
   {
