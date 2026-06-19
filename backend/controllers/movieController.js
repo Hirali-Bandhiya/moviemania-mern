@@ -34,7 +34,7 @@ exports.getAllMovies = async (req, res) => {
     
     res.json(movies.map(decorateContentAccess));
   } catch (error) {
-    console.error("Error fetching movies:", error);
+    console.error("Error fetching movie:", error);
     res.status(500).json({ 
       message: "Error fetching movies",
       error: error.message 
