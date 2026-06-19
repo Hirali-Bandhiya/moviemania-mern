@@ -13,7 +13,7 @@ const offersData = [
   },
   {
     title: "Family Pack",
-    description: "Stream on 4 devices at the same time.",
+    description: "Stream on 5 devices at the same time.",
     price: "₹499 / month",
     type: "family",
     discount: 35,
