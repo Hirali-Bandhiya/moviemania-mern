@@ -82,7 +82,7 @@ exports.updateUser = async (req, res) => {
       user.currentSubscription = {
         plan: planDoc?._id || user.currentSubscription?.plan || null,
         planName: planDoc?.name || planDoc?.planCode || req.body.subscriptionPlan,
-        status: "active",
+        status: "Active",
         startedAt: subscriptionStartDate,
         expiresAt: subscriptionEndDate,
         autoRenew: Boolean(user.currentSubscription?.autoRenew),
