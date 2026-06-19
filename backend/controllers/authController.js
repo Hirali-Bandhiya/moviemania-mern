@@ -44,7 +44,7 @@ const buildPasswordResetEmail = (resetUrl) => `
   <div style="font-family: Arial, sans-serif; background: #f6f6f6; padding: 24px;">
     <div style="max-width: 570px; margin: 0 auto; background: #ffffff; border-radius: 12px; padding: 32px; border: 1px solid #e5e7eb;">
       <h2 style="margin: 0 0 16px; color: #111827;">Password Reset</h2>
-      <p style="margin: 0 0 24px; color: #374151; line-height: 1.6;">We received a request to reset your MovieMania password. Click the button below to choose a new password. This link expires in 15 minutes.</p>
+      <p style="margin: 0 0 24px; color: #374151; line-height: 1.6;">We received a request to reset your MovieMania password. Click the button below to choose a new passwords. This link expires in 15 minutes.</p>
       <a href="${resetUrl}" style="display: inline-block; background: #dc2626; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: 700;">Reset Password</a>
       <p style="margin: 24px 0 0; color: #6b7280; font-size: 14px; line-height: 1.6;">If the button does not work, copy and paste this link into your browser:</p>
       <p style="word-break: break-all; color: #2563eb; font-size: 14px;">${resetUrl}</p>
