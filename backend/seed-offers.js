@@ -6,7 +6,7 @@ const offersData = [
   {
     title: "Student Discount",
     description: "Get 50% OFF on premium subscription for students.",
-    price: "₹199 / month",
+    price: "₹299 / month",
     type: "student",
     discount: 50,
     color: "from-red-500 to-pink-600"
