@@ -6,7 +6,7 @@ const seriesData = [
   {
     title: "Stranger Things",
     genre: "Sci-Fi",
-    year: 2016,
+    year: 2015,
     rating: 8.8,
     image: "strangerthings.jpg",
     trailerUrl: "https://www.youtube.com/watch?v=b9ncwOtgF8w",
