@@ -29,7 +29,7 @@ exports.getAllMovies = async (req, res) => {
     const movies = await Movie.find(filter);
     
     if (!movies.length) {
-      console.log("⚠️  No movies found in database", { filter });
+      console.log(" No movies found in database", { filter });
     }
     
     res.json(movies.map(decorateContentAccess));
