@@ -49,8 +49,11 @@ function AdminMovies() {
 
   const loadMovies = async () => {
     try {
-      const { data } = await api.get("/movies");
-      const moviesOnly = (data || []).filter((movie) => String(movie.type || "").toLowerCase() !== "series");
+      const response = await api.get("/movies");
+      const rawData = Array.isArray(response.data)
+        ? response.data
+        : (Array.isArray(response.data?.data) ? response.data.data : []);
+      const moviesOnly = rawData.filter((movie) => String(movie.type || "").toLowerCase() !== "series");
       setMovieList(moviesOnly);
       setFilteredMovies(moviesOnly);
     } catch (error) {

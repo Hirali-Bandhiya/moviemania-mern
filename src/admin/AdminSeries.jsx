@@ -49,8 +49,10 @@ function AdminSeries() {
 
   const loadSeries = async () => {
     try {
-      const { data } = await api.get("/series");
-      const seriesOnly = Array.isArray(data) ? data : [];
+      const response = await api.get("/series");
+      const seriesOnly = Array.isArray(response.data)
+        ? response.data
+        : (Array.isArray(response.data?.data) ? response.data.data : []);
       setSeriesList(seriesOnly);
       setFilteredSeries(seriesOnly);
     } catch (error) {

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home";
 import MovieDetails from "./pages/MovieDetails";
@@ -30,12 +30,11 @@ import AdminProtectedRoute from "./admin/AdminProtectedRoute";
 import Payment from "./pages/Payment";
 import Wishlist from "./features/wishlist/pages/Wishlist";
 
-
 import { isLoggedIn } from "./utils/auth";
-import { Navigate } from "react-router-dom";
+import { ROUTES } from "./constants/routes";
 
 const LoginProtectedRoute = ({ children }) => {
-  return isLoggedIn() ? children : <Navigate to="/login" replace />;
+  return isLoggedIn() ? children : <Navigate to={ROUTES.LOGIN} replace />;
 };
 
 function App() {
@@ -45,39 +44,39 @@ function App() {
       <Routes>
 
         {/* Public Pages */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/register" element={<Register />} />
+        <Route path={ROUTES.LOGIN} element={<Login />} />
+        <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
+        <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
+        <Route path={ROUTES.REGISTER} element={<Register />} />
 
         {/* Guest routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/plans" element={<Plans />} />
-        <Route path="/payment" element={<Payment />} />
-        <Route path="/anime" element={<Navigate to="/" replace />} />
-        <Route path="/tvshows" element={<Navigate to="/" replace />} />
-        <Route path="/offers" element={<Offers />} />
+        <Route path={ROUTES.HOME} element={<Home />} />
+        <Route path={ROUTES.PLANS} element={<Plans />} />
+        <Route path={ROUTES.PAYMENT} element={<Payment />} />
+        <Route path={ROUTES.ANIME} element={<Navigate to={ROUTES.HOME} replace />} />
+        <Route path={ROUTES.TV_SHOWS} element={<Navigate to={ROUTES.HOME} replace />} />
+        <Route path={ROUTES.OFFERS} element={<Offers />} />
 
-        <Route path="/wishlist" element={<LoginProtectedRoute><Wishlist /></LoginProtectedRoute>} />
+        <Route path={ROUTES.WISHLIST} element={<LoginProtectedRoute><Wishlist /></LoginProtectedRoute>} />
         
         <Route
-          path="/movies"
+          path={ROUTES.MOVIES}
           element={<Movies />}
         />
         <Route
-          path="/series"
+          path={ROUTES.SERIES}
           element={<Series />}
         />
 
         {/* Public Details Page */}
         <Route
-          path="/movie/:id"
+          path={ROUTES.MOVIE_DETAILS}
           element={<MovieDetails />}
         />
 
         {/* Protected Pages */}
         <Route
-          path="/watch/:id"
+          path={ROUTES.WATCH_MOVIE}
           element={
             <ProtectedRoute>
               <WatchMovie />
@@ -86,7 +85,7 @@ function App() {
         />
 
         <Route
-          path="/profile"
+          path={ROUTES.PROFILE}
           element={
             <ProtectedRoute>
               <Profile />
@@ -95,7 +94,7 @@ function App() {
         />
 
         <Route
-          path="/edit-profile"
+          path={ROUTES.EDIT_PROFILE}
           element={
             <ProtectedRoute>
               <EditProfile />
@@ -104,7 +103,7 @@ function App() {
         />
 
         <Route
-          path="/dashboard"
+          path={ROUTES.DASHBOARD}
           element={
             <ProtectedRoute>
               <Dashboard />
@@ -113,11 +112,11 @@ function App() {
         />
 
         {/* Admin Login */}
-        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLogin />} />
 
         {/* Admin Profile */}
         <Route
-          path="/admin-profile"
+          path={ROUTES.ADMIN_PROFILE}
           element={
             <AdminProtectedRoute>
               <AdminProfile />
@@ -127,7 +126,7 @@ function App() {
 
         {/* Admin Routes */}
         <Route
-          path="/admin"
+          path={ROUTES.ADMIN_DASHBOARD}
           element={
             <AdminProtectedRoute>
               <AdminDashboard />
@@ -135,7 +134,7 @@ function App() {
           }
         />
         <Route
-          path="/admin/movies"
+          path={ROUTES.ADMIN_MOVIES}
           element={
             <AdminProtectedRoute>
               <AdminMovies />
@@ -143,7 +142,7 @@ function App() {
           }
         />
         <Route
-          path="/admin/series"
+          path={ROUTES.ADMIN_SERIES}
           element={
             <AdminProtectedRoute>
               <AdminSeries />
@@ -151,7 +150,7 @@ function App() {
           }
         />
         <Route
-          path="/admin/users"
+          path={ROUTES.ADMIN_USERS}
           element={
             <AdminProtectedRoute>
               <AdminUsers />
@@ -159,7 +158,7 @@ function App() {
           }
         />
         <Route
-          path="/admin/plans"
+          path={ROUTES.ADMIN_PLANS}
           element={
             <AdminProtectedRoute>
               <AdminPlans />
@@ -167,7 +166,7 @@ function App() {
           }
         />
         <Route
-          path="/admin/offers"
+          path={ROUTES.ADMIN_OFFERS}
           element={
             <AdminProtectedRoute>
               <AdminOffers />
@@ -175,7 +174,7 @@ function App() {
           }
         />
         <Route
-          path="/admin/payments"
+          path={ROUTES.ADMIN_PAYMENTS}
           element={
             <AdminProtectedRoute>
               <AdminPayments />

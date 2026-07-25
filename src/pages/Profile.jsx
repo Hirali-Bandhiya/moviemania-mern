@@ -7,6 +7,7 @@ import { getRecentlyWatched } from "../utils/history";
 import { getCurrentUser, logout, updateCurrentUser } from "../utils/auth";
 import { normalizePlanSelection } from "../utils/planSelection";
 import { getWishlist } from "../features/wishlist/utils/wishlistHelper";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
 const getCurrentPlanDisplayName = (plan) => {
   const rawName = String(plan?.name || plan?.planId || "").trim();
@@ -39,8 +40,8 @@ function Profile() {
     const planInput =
       currentUser?.subscriptionPlan ||
       currentUser?.plan ||
-      localStorage.getItem("subscriptionPlan") ||
-      localStorage.getItem("selectedPlan") ||
+      localStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_PLAN) ||
+      localStorage.getItem(STORAGE_KEYS.SELECTED_PLAN) ||
       "";
 
     return normalizePlanSelection(planInput);

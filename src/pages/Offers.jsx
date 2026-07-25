@@ -19,8 +19,11 @@ function Offers() {
   useEffect(() => {
     const fetchOffers = async () => {
       try {
-        const { data } = await api.get("/offers");
-        setOffers(Array.isArray(data) ? data : []);
+        const response = await api.get("/offers");
+        const rawData = Array.isArray(response.data)
+          ? response.data
+          : (Array.isArray(response.data?.data) ? response.data.data : []);
+        setOffers(rawData);
         setError("");
       } catch (error) {
         console.error("Failed to fetch offers", error);

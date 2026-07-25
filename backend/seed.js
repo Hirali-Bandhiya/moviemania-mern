@@ -1,3 +1,4 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const Movie = require("./models/Movie");
 
@@ -185,8 +186,8 @@ const sampleMovies = [
 
 async function seedDatabase() {
   try {
-    // Connect to MongoDB
-    await mongoose.connect("mongodb://127.0.0.1:27017/moviemania");
+    const mongoUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/moviemania";
+    await mongoose.connect(mongoUri);
     console.log("✅ Connected to MongoDB");
 
     // Clear existing movies

@@ -24,9 +24,10 @@ function Home() {
   useEffect(() => {
     api.get("/movies")
       .then(res => {
-        const apiMovies = Array.isArray(res.data)
-          ? res.data.filter((item) => String(item.type || "").toLowerCase() !== "series")
-          : [];
+        const rawData = Array.isArray(res.data)
+          ? res.data
+          : (Array.isArray(res.data?.data) ? res.data.data : []);
+        const apiMovies = rawData.filter((item) => String(item.type || "").toLowerCase() !== "series");
 
         if (apiMovies.length > 0) {
           setMovies(apiMovies);

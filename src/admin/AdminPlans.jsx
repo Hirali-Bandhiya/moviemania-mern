@@ -86,8 +86,11 @@ function AdminPlans() {
 
   const loadPlans = async () => {
     try {
-      const { data } = await api.get("/plans");
-      const plansData = Array.isArray(data) && data.length > 0 ? data.map(normalizePlan) : defaultPlans;
+      const response = await api.get("/plans");
+      const rawData = Array.isArray(response.data)
+        ? response.data
+        : (Array.isArray(response.data?.data) ? response.data.data : []);
+      const plansData = rawData.length > 0 ? rawData.map(normalizePlan) : defaultPlans;
       setPlans(plansData);
       setFilteredPlans(plansData);
     } catch (error) {

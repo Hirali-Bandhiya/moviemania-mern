@@ -1,13 +1,15 @@
+import { STORAGE_KEYS } from "../constants/storageKeys";
+
 // videoProgress.js
 // Save video progress every 5 seconds to localStorage
 
 export const saveProgress = (movieId, currentTime) => {
   const progress = { movieId, currentTime };
-  localStorage.setItem(`movieProgress_${movieId}`, JSON.stringify(progress));
+  localStorage.setItem(`${STORAGE_KEYS.MOVIE_PROGRESS_PREFIX}${movieId}`, JSON.stringify(progress));
 };
 
 export const getProgress = (movieId) => {
-  const stored = localStorage.getItem(`movieProgress_${movieId}`);
+  const stored = localStorage.getItem(`${STORAGE_KEYS.MOVIE_PROGRESS_PREFIX}${movieId}`);
   return stored ? JSON.parse(stored).currentTime : 0;
 };
 

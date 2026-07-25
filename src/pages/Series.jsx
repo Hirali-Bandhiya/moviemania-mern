@@ -83,8 +83,11 @@ function Series() {
   useEffect(() => {
     const loadSeries = async () => {
       try {
-        const { data } = await api.get("/series");
-        setSeriesList(Array.isArray(data) ? data : []);
+        const response = await api.get("/series");
+        const rawData = Array.isArray(response.data)
+          ? response.data
+          : (Array.isArray(response.data?.data) ? response.data.data : []);
+        setSeriesList(rawData);
         setError("");
       } catch (error) {
         console.error("[API] Failed to load series", error);

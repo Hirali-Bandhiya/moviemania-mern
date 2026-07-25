@@ -1,8 +1,9 @@
 import { loginApi, paymentSuccessApi, registerApi } from "../services/authService";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
-const TOKEN_KEY = "token";
-const USER_KEY = "currentUser";
-const CHECKOUT_PENDING_KEY = "checkoutPending";
+const TOKEN_KEY = STORAGE_KEYS.TOKEN;
+const USER_KEY = STORAGE_KEYS.CURRENT_USER;
+const CHECKOUT_PENDING_KEY = STORAGE_KEYS.CHECKOUT_PENDING;
 
 const safeParse = (value) => {
   try {
@@ -111,7 +112,7 @@ const getSubscriptionExpiry = (user) => {
     user?.subscriptionExpiry ||
     user?.subscriptionEndDate ||
     user?.currentSubscription?.expiresAt ||
-    localStorage.getItem("subscriptionEndDate") ||
+    localStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_END_DATE) ||
     null
   );
 };
@@ -132,8 +133,8 @@ export const hasSubscription = () => {
 
 export const hasActivePlan = () => {
   const user = getCurrentUser();
-  const savedPlan = localStorage.getItem("subscriptionPlan");
-  const paymentStatus = localStorage.getItem("paymentStatus");
+  const savedPlan = localStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_PLAN);
+  const paymentStatus = localStorage.getItem(STORAGE_KEYS.PAYMENT_STATUS);
   const expiryDate = getSubscriptionExpiry(user);
 
   // Honor the backend subscription flag, but still expire access when the date is in the past.

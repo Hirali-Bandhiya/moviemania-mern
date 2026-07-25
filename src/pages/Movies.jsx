@@ -67,9 +67,10 @@ function Movies() {
   const fetchMovies = async () => {
     try {
       const response = await api.get("/movies");
-      const moviesOnly = Array.isArray(response.data)
-        ? response.data.filter((movie) => String(movie.type || "").toLowerCase() !== "series")
-        : [];
+      const rawData = Array.isArray(response.data)
+        ? response.data
+        : (Array.isArray(response.data?.data) ? response.data.data : []);
+      const moviesOnly = rawData.filter((movie) => String(movie.type || "").toLowerCase() !== "series");
       setMovieData(moviesOnly);
       setError("");
     } catch (err) {

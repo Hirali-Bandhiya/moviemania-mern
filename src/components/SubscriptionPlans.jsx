@@ -9,8 +9,11 @@ function SubscriptionPlans() {
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const { data } = await api.get("/plans");
-        setPlans(Array.isArray(data) && data.length > 0 ? data : []);
+        const response = await api.get("/plans");
+        const rawData = Array.isArray(response.data)
+          ? response.data
+          : (Array.isArray(response.data?.data) ? response.data.data : []);
+        setPlans(rawData);
       } catch (error) {
         console.error("Failed to load plans", error);
         setPlans([]);

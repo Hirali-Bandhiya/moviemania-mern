@@ -1,8 +1,9 @@
 import api from "../../../services/api";
 import { isLoggedIn } from "../../../utils/auth";
+import { STORAGE_KEYS } from "../../../constants/storageKeys";
 
 export const getWishlist = () => {
-  return JSON.parse(localStorage.getItem("wishlist")) || [];
+  return JSON.parse(localStorage.getItem(STORAGE_KEYS.WISHLIST)) || [];
 };
 
 const syncWishlistToBackend = async (movieId) => {
@@ -18,14 +19,14 @@ const syncWishlistToBackend = async (movieId) => {
 export const addToWishlistStore = (item) => {
   const current = getWishlist();
   if (!current.find((i) => i._id === item._id)) {
-    localStorage.setItem("wishlist", JSON.stringify([...current, item]));
+    localStorage.setItem(STORAGE_KEYS.WISHLIST, JSON.stringify([...current, item]));
     syncWishlistToBackend(item._id);
   }
 };
 
 export const removeFromWishlistStore = (id) => {
   const current = getWishlist();
-  localStorage.setItem("wishlist", JSON.stringify(current.filter((i) => i._id !== id)));
+  localStorage.setItem(STORAGE_KEYS.WISHLIST, JSON.stringify(current.filter((i) => i._id !== id)));
   syncWishlistToBackend(id);
 };
 

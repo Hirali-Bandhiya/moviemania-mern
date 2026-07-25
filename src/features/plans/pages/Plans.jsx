@@ -21,10 +21,11 @@ function Plans() {
   useEffect(() => {
     const loadPlans = async () => {
       try {
-        const { data } = await api.get("/plans");
-        const plansData = Array.isArray(data)
-          ? data.map(normalizePlan).filter((plan) => plan.active)
-          : [];
+        const response = await api.get("/plans");
+        const rawData = Array.isArray(response.data)
+          ? response.data
+          : (Array.isArray(response.data?.data) ? response.data.data : []);
+        const plansData = rawData.map(normalizePlan).filter((plan) => plan.active);
         setPlans(plansData);
         setError("");
       } catch (error) {

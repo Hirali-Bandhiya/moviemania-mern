@@ -1,5 +1,7 @@
-const PENDING_PLAN_KEY = "pendingPlanSelection";
-const SELECTED_PLAN_KEY = "selectedPlan";
+import { STORAGE_KEYS } from "../constants/storageKeys";
+
+const PENDING_PLAN_KEY = STORAGE_KEYS.PENDING_PLAN;
+const SELECTED_PLAN_KEY = STORAGE_KEYS.SELECTED_PLAN;
 
 const safeParse = (value) => {
   try {

@@ -28,21 +28,46 @@ function AdminDashboard() {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const { data: usersData } = await api.get("/users");
+        const [moviesRes, seriesRes, usersRes, offersRes] = await Promise.allSettled([
+          api.get("/movies"),
+          api.get("/series"),
+          api.get("/users"),
+          api.get("/offers/admin/all"),
+        ]);
+
+        const extractArray = (res) =>
+          res.status === "fulfilled"
+            ? Array.isArray(res.value.data)
+              ? res.value.data
+              : Array.isArray(res.value.data?.data)
+              ? res.value.data.data
+              : []
+            : [];
+
+        const moviesList = extractArray(moviesRes);
+        const seriesList = extractArray(seriesRes);
+        const usersList = extractArray(usersRes);
+        const offersList = extractArray(offersRes);
+
+        const realMovies = moviesList.length
+          ? moviesList.filter((m) => String(m.type || "").toLowerCase() !== "series")
+          : movies.filter((m) => m.type !== "series");
+        const realSeries = seriesList.length
+          ? seriesList
+          : movies.filter((m) => m.type === "series");
+
+        if (moviesList.length) {
+          setMoviesData(moviesList);
+        }
+
         setStats({
-          totalMovies: movies.filter((m) => m.type !== "series").length,
-          totalSeries: movies.filter((m) => m.type === "series").length,
-          totalUsers: Array.isArray(usersData) ? usersData.length : 0,
-          totalOffers: offers.length,
+          totalMovies: realMovies.length,
+          totalSeries: realSeries.length,
+          totalUsers: usersList.length,
+          totalOffers: offersList.length || offers.length,
         });
       } catch (error) {
         console.error("Failed to load dashboard stats", error);
-        setStats({
-          totalMovies: movies.filter((m) => m.type !== "series").length,
-          totalSeries: movies.filter((m) => m.type === "series").length,
-          totalUsers: 0,
-          totalOffers: offers.length,
-        });
       }
     };
 

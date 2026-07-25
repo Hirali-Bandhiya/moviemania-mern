@@ -30,8 +30,11 @@ function AdminOffers() {
 
   const loadOffers = async () => {
     try {
-      const { data } = await api.get("/offers/admin/all");
-      setOffers(data);
+      const response = await api.get("/offers/admin/all");
+      const rawData = Array.isArray(response.data)
+        ? response.data
+        : (Array.isArray(response.data?.data) ? response.data.data : []);
+      setOffers(rawData);
     } catch (error) {
       console.error("Failed to load offers", error);
     }
@@ -39,8 +42,11 @@ function AdminOffers() {
 
   const loadMovies = async () => {
     try {
-      const { data } = await api.get("/movies");
-      setMovies(data.filter(m => m.type !== "series"));
+      const response = await api.get("/movies");
+      const rawData = Array.isArray(response.data)
+        ? response.data
+        : (Array.isArray(response.data?.data) ? response.data.data : []);
+      setMovies(rawData.filter(m => m.type !== "series"));
     } catch (error) {
       console.error("Failed to load movies", error);
     }
