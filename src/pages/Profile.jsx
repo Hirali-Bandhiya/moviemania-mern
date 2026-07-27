@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import api from "../services/api";
+import { getCurrentUserApi } from "../services/userService";
 import Navbar from "../components/Navbar";
 import PaymentHistory from "../features/PaymentHistory";
 import { getRecentlyWatched } from "../utils/history";
@@ -56,7 +56,7 @@ function Profile() {
 
     const loadProfile = async () => {
       try {
-        const { data } = await api.get("/users/me");
+        const { data } = await getCurrentUserApi();
         const profile = { ...currentUser, ...data };
 
         if (!profile.referralCode) {

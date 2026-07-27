@@ -1,4 +1,4 @@
-import api from "../../../services/api";
+import { syncWishlistApi } from "../../../services/userService";
 import { isLoggedIn } from "../../../utils/auth";
 import { STORAGE_KEYS } from "../../../constants/storageKeys";
 
@@ -10,7 +10,7 @@ const syncWishlistToBackend = async (movieId) => {
   if (!isLoggedIn()) return;
 
   try {
-    await api.put("/users/wishlist", { movieId });
+    await syncWishlistApi(movieId);
   } catch (error) {
     console.warn("Wishlist sync failed", error);
   }

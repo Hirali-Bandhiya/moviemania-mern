@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../services/api";
+import { getMovies, createMovie, updateMovie, deleteMovie } from "../services/movieService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
 import FormModal from "./components/FormModal";
@@ -49,7 +49,7 @@ function AdminMovies() {
 
   const loadMovies = async () => {
     try {
-      const response = await api.get("/movies");
+      const response = await getMovies();
       const rawData = Array.isArray(response.data)
         ? response.data
         : (Array.isArray(response.data?.data) ? response.data.data : []);
@@ -187,7 +187,7 @@ function AdminMovies() {
     if (!window.confirm("Delete this movie?")) return;
 
     try {
-      await api.delete(`/movies/${_id}`);
+      await deleteMovie(_id);
       await loadMovies();
     } catch (error) {
       alert(error?.response?.data?.message || "Failed to delete movie");
@@ -208,9 +208,9 @@ function AdminMovies() {
 
     try {
       if (editingMovie?._id) {
-        await api.put(`/movies/${editingMovie._id}`, payload);
+        await updateMovie(editingMovie._id, payload);
       } else {
-        await api.post("/movies", payload);
+        await createMovie(payload);
       }
 
       await loadMovies();

@@ -1,4 +1,4 @@
-import api from "../services/api";
+import { syncWishlistApi } from "../services/userService";
 import { isLoggedIn } from "./auth";
 import { STORAGE_KEYS } from "../constants/storageKeys";
 
@@ -16,7 +16,7 @@ export const getWatchlist = () => {
 export const syncWatchlistToBackend = async (movieId) => {
   if (!isLoggedIn()) return;
   try {
-    await api.put("/users/wishlist", { movieId });
+    await syncWishlistApi(movieId);
   } catch(err) {
     console.warn("Could not sync watchlist to backend", err);
   }

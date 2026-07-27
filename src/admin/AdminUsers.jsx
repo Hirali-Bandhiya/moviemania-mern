@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import api from "../services/api";
+import { getUsers, updateUser, deleteUser } from "../services/userService";
+import { registerApi } from "../services/authService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
 import AdminModal from "./components/AdminModal";
@@ -36,7 +37,7 @@ function AdminUsers() {
 
   const loadUsers = async () => {
     try {
-      const res = await api.get("/users");
+      const res = await getUsers();
       setUsers(res.data);
     } catch (err) {
       console.error("Failed to fetch users");
@@ -94,7 +95,7 @@ function AdminUsers() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await api.delete(`/users/${id}`);
+        await deleteUser(id);
         loadUsers();
       } catch(err) {
         alert("Delete failed");
@@ -106,9 +107,9 @@ function AdminUsers() {
     if (validate()) {
       try {
         if (editingUser) {
-          await api.put(`/users/${editingUser._id}`, formData);
+          await updateUser(editingUser._id, formData);
         } else {
-          await api.post("/auth/register", formData);
+          await registerApi(formData);
         }
         setIsModalOpen(false);
         loadUsers();

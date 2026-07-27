@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../services/api";
+import { getSeries, createSeries, updateSeries, deleteSeries } from "../services/seriesService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
 import FormModal from "./components/FormModal";
@@ -49,7 +49,7 @@ function AdminSeries() {
 
   const loadSeries = async () => {
     try {
-      const response = await api.get("/series");
+      const response = await getSeries();
       const seriesOnly = Array.isArray(response.data)
         ? response.data
         : (Array.isArray(response.data?.data) ? response.data.data : []);
@@ -207,7 +207,7 @@ function AdminSeries() {
     if (!window.confirm("Are you sure you want to delete this series?")) return;
 
     try {
-      await api.delete(`/series/${id}`);
+      await deleteSeries(id);
       await loadSeries();
     } catch (error) {
       alert(error?.response?.data?.message || "Failed to delete series");
@@ -225,9 +225,9 @@ function AdminSeries() {
 
     try {
       if (editingSeries?._id) {
-        await api.put(`/series/${editingSeries._id}`, payload);
+        await updateSeries(editingSeries._id, payload);
       } else {
-        await api.post("/series", payload);
+        await createSeries(payload);
       }
 
       await loadSeries();

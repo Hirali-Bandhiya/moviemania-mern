@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import api from "../services/api";
+import { getMovies } from "../services/movieService";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import MovieCard from "../components/MovieCard";
@@ -66,7 +66,7 @@ function Movies() {
 
   const fetchMovies = async () => {
     try {
-      const response = await api.get("/movies");
+      const response = await getMovies();
       const rawData = Array.isArray(response.data)
         ? response.data
         : (Array.isArray(response.data?.data) ? response.data.data : []);

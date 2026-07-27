@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import api from "../services/api";
+import { getMovies } from "../services/movieService";
+import { getSeries } from "../services/seriesService";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import MovieCard from "../components/MovieCard";
@@ -26,8 +27,8 @@ function Dashboard() {
     const loadCatalog = async () => {
       try {
         const [moviesResponse, seriesResponse] = await Promise.all([
-          api.get("/movies"),
-          api.get("/series"),
+          getMovies(),
+          getSeries(),
         ]);
 
         const movieItems = Array.isArray(moviesResponse.data) ? moviesResponse.data : [];

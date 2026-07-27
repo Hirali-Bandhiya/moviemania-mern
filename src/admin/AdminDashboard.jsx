@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
-import api from "../services/api";
+import { getMovies } from "../services/movieService";
+import { getSeries } from "../services/seriesService";
+import { getUsers } from "../services/userService";
+import { getAdminOffers } from "../services/offerService";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from "chart.js";
 import { Pie, Bar } from "react-chartjs-2";
 import AdminSidebar from "./components/AdminSidebar";
@@ -29,10 +32,10 @@ function AdminDashboard() {
     const loadStats = async () => {
       try {
         const [moviesRes, seriesRes, usersRes, offersRes] = await Promise.allSettled([
-          api.get("/movies"),
-          api.get("/series"),
-          api.get("/users"),
-          api.get("/offers/admin/all"),
+          getMovies(),
+          getSeries(),
+          getUsers(),
+          getAdminOffers(),
         ]);
 
         const extractArray = (res) =>

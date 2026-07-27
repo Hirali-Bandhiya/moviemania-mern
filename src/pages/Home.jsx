@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import { getMovies } from "../services/movieService";
 
 import UnlimitedSeries from "../components/UnlimitedSeries";
 import Navbar from "../components/Navbar";
@@ -22,7 +22,7 @@ function Home() {
 
   // Fetch movies from backend
   useEffect(() => {
-    api.get("/movies")
+    getMovies()
       .then(res => {
         const rawData = Array.isArray(res.data)
           ? res.data

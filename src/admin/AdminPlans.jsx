@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../services/api";
+import { getPlans, createPlan, updatePlan, deletePlan } from "../services/planService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
 import FormModal from "./components/FormModal";
@@ -86,7 +86,7 @@ function AdminPlans() {
 
   const loadPlans = async () => {
     try {
-      const response = await api.get("/plans");
+      const response = await getPlans();
       const rawData = Array.isArray(response.data)
         ? response.data
         : (Array.isArray(response.data?.data) ? response.data.data : []);
@@ -170,7 +170,7 @@ function AdminPlans() {
     if (!window.confirm("Are you sure you want to delete this plan?")) return;
 
     try {
-      await api.delete(`/plans/${id}`);
+      await deletePlan(id);
       await loadPlans();
     } catch (error) {
       alert(error?.response?.data?.message || "Failed to delete plan");
@@ -188,9 +188,9 @@ function AdminPlans() {
 
     try {
       if (editingPlan?._id) {
-        await api.put(`/plans/${editingPlan._id}`, payload);
+        await updatePlan(editingPlan._id, payload);
       } else {
-        await api.post("/plans", payload);
+        await createPlan(payload);
       }
 
       await loadPlans();

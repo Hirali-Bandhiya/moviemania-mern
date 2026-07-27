@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../../services/api";
+import { getPlans } from "../../../services/planService";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import PlanCard from "../components/PlanCard";
@@ -21,7 +21,7 @@ function Plans() {
   useEffect(() => {
     const loadPlans = async () => {
       try {
-        const response = await api.get("/plans");
+        const response = await getPlans();
         const rawData = Array.isArray(response.data)
           ? response.data
           : (Array.isArray(response.data?.data) ? response.data.data : []);

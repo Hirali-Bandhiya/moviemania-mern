@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import { getMyPayments } from "../services/paymentService";
 
 function PaymentHistory() {
   const [history, setHistory] = useState([]);
@@ -11,7 +11,7 @@ function PaymentHistory() {
     const loadHistory = async () => {
       try {
         // Prefer the server record so payment history survives refreshes and new devices.
-        const { data } = await api.get("/payments/me");
+        const { data } = await getMyPayments();
         if (active) {
           setHistory(Array.isArray(data) ? data : []);
         }

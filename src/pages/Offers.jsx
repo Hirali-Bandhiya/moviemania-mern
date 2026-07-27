@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api";
+import { getOffers } from "../services/offerService";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { isLoggedIn, hasActivePlan } from "../utils/auth";
@@ -19,7 +19,7 @@ function Offers() {
   useEffect(() => {
     const fetchOffers = async () => {
       try {
-        const response = await api.get("/offers");
+        const response = await getOffers();
         const rawData = Array.isArray(response.data)
           ? response.data
           : (Array.isArray(response.data?.data) ? response.data.data : []);

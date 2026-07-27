@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import api from "../services/api";
+import { createPaymentOrderApi, verifyPaymentApi } from "../services/paymentService";
 import { getCurrentUser, updateCurrentUser, logout, clearCheckoutPending, isCheckoutPending } from "../utils/auth";
 import {
   clearPendingPlanSelection,
@@ -103,7 +103,7 @@ function Payment() {
   // scan UI removed
 
   const verifyPayment = async ({ orderId, paymentId, signature, amount, plan }) => {
-    const { data } = await api.post("/payment/verify", {
+    const { data } = await verifyPaymentApi({
       razorpay_order_id: orderId,
       razorpay_payment_id: paymentId,
       razorpay_signature: signature,
@@ -127,7 +127,7 @@ function Payment() {
     try {
       const currentUser = getCurrentUser();
 
-      const { data } = await api.post("/payment/create-order", {
+      const { data } = await createPaymentOrderApi({
         amount: selectedPlan.amount,
         planId: selectedPlan.planId,
         planName: selectedPlan.name,

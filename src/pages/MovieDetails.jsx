@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import localData from "../data/movies";
-import api from "../services/api";
+import { getMovies, getMovieById } from "../services/movieService";
+import { getSeries, getSeriesById } from "../services/seriesService";
 import MovieCard from "../components/MovieCard";
 import { Star, ArrowLeft, Play } from "lucide-react";
 import { getImageUrl } from "../utils/imageHelper";
@@ -46,7 +47,7 @@ function MovieDetails() {
       }
 
       try {
-        const { data } = await api.get(`/movies/${id}`);
+        const { data } = await getMovieById(id);
         if (active && data) {
           setMovie(data);
           setLoading(false);
@@ -57,7 +58,7 @@ function MovieDetails() {
       }
 
       try {
-        const { data } = await api.get(`/series/${id}`);
+        const { data } = await getSeriesById(id);
         if (active && data) {
           setMovie(data);
         }
@@ -135,7 +136,7 @@ function MovieDetails() {
       const fallbackRelated = buildRelatedList(localData);
 
       try {
-        const results = await Promise.allSettled([api.get("/movies"), api.get("/series")]);
+        const results = await Promise.allSettled([getMovies(), getSeries()]);
 
         const moviesApi =
           results[0].status === "fulfilled" && Array.isArray(results[0].value.data)

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import api from "../services/api";
+import { getPlans } from "../services/planService";
 
 function SubscriptionPlans() {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ function SubscriptionPlans() {
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const response = await api.get("/plans");
+        const response = await getPlans();
         const rawData = Array.isArray(response.data)
           ? response.data
           : (Array.isArray(response.data?.data) ? response.data.data : []);

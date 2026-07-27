@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import { getAdminPayments } from "../services/paymentService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
 
@@ -10,7 +10,7 @@ function AdminPayments() {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const { data } = await api.get("/payments/records/all");
+        const { data } = await getAdminPayments();
         setPayments(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Failed to fetch payments:", err);

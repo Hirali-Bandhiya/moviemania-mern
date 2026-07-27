@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import api from "../services/api";
+import { getSeries } from "../services/seriesService";
 import Navbar from "../components/Navbar";
 import MovieCard from "../components/MovieCard";
 import Footer from "../components/Footer";
@@ -83,7 +83,7 @@ function Series() {
   useEffect(() => {
     const loadSeries = async () => {
       try {
-        const response = await api.get("/series");
+        const response = await getSeries();
         const rawData = Array.isArray(response.data)
           ? response.data
           : (Array.isArray(response.data?.data) ? response.data.data : []);

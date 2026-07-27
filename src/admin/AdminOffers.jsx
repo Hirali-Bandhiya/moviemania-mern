@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import api from "../services/api";
+import { getAdminOffers, createOffer, updateOffer, deleteOffer } from "../services/offerService";
+import { getMovies } from "../services/movieService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
 import FormModal from "./components/FormModal";
@@ -30,7 +31,7 @@ function AdminOffers() {
 
   const loadOffers = async () => {
     try {
-      const response = await api.get("/offers/admin/all");
+      const response = await getAdminOffers();
       const rawData = Array.isArray(response.data)
         ? response.data
         : (Array.isArray(response.data?.data) ? response.data.data : []);
@@ -42,7 +43,7 @@ function AdminOffers() {
 
   const loadMovies = async () => {
     try {
-      const response = await api.get("/movies");
+      const response = await getMovies();
       const rawData = Array.isArray(response.data)
         ? response.data
         : (Array.isArray(response.data?.data) ? response.data.data : []);
@@ -101,7 +102,7 @@ function AdminOffers() {
   const handleDelete = async (id) => {
     if (!window.confirm("Soft delete this offer?")) return;
     try {
-      await api.delete(`/offers/${id}`);
+      await deleteOffer(id);
       await loadOffers();
     } catch (error) {
       alert(error?.response?.data?.message || "Failed to delete offer");
@@ -117,9 +118,9 @@ function AdminOffers() {
       };
 
       if (editingOffer?._id) {
-        await api.put(`/offers/${editingOffer._id}`, payload);
+        await updateOffer(editingOffer._id, payload);
       } else {
-        await api.post("/offers", payload);
+        await createOffer(payload);
       }
       await loadOffers();
       setIsModalOpen(false);

@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import movies from "../data/movies";
-import api from "../services/api";
+import { getMovies, getMovieById } from "../services/movieService";
+import { getSeries, getSeriesById } from "../services/seriesService";
 import MovieCard from "../components/MovieCard";
 import { getImageUrl } from "../utils/imageHelper";
 import { resolvePlaybackUrl, resolveTrailerUrl } from "../utils/mediaResolver";
@@ -65,7 +66,7 @@ function WatchMovie() {
       }
 
       try {
-        const { data } = await api.get(`/movies/${id}`);
+        const { data } = await getMovieById(id);
         if (active && data) {
           setMovie(data);
           setLoading(false);
@@ -76,7 +77,7 @@ function WatchMovie() {
       }
 
       try {
-        const { data } = await api.get(`/series/${id}`);
+        const { data } = await getSeriesById(id);
         if (active && data) {
           setMovie(data);
         }
@@ -178,8 +179,8 @@ function WatchMovie() {
 
       try {
         const results = await Promise.allSettled([
-          api.get("/movies"),
-          api.get("/series"),
+          getMovies(),
+          getSeries(),
         ]);
 
         const moviesApi =
