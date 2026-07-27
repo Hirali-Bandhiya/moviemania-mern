@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { getMovies, createMovie, updateMovie, deleteMovie } from "../services/movieService";
+import { useMovies } from "../hooks/useMovies";
+import { createMovie, updateMovie, deleteMovie } from "../services/movieService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
 import FormModal from "./components/FormModal";
@@ -18,7 +19,7 @@ const imageOptions = Object.keys(imageModules)
   .map((filename) => ({ value: filename, label: filename }));
 
 function AdminMovies() {
-  const [movieList, setMovieList] = useState([]);
+  const { movies: movieList, setMovies: setMovieList, fetchMovies: loadMovies } = useMovies();
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,26 +43,9 @@ function AdminMovies() {
 
   const itemsPerPage = 10;
 
-  // Load movies from backend
   useEffect(() => {
-    loadMovies();
-  }, []);
-
-  const loadMovies = async () => {
-    try {
-      const response = await getMovies();
-      const rawData = Array.isArray(response.data)
-        ? response.data
-        : (Array.isArray(response.data?.data) ? response.data.data : []);
-      const moviesOnly = rawData.filter((movie) => String(movie.type || "").toLowerCase() !== "series");
-      setMovieList(moviesOnly);
-      setFilteredMovies(moviesOnly);
-    } catch (error) {
-      console.error("Failed to load movies", error);
-      setMovieList([]);
-      setFilteredMovies([]);
-    }
-  };
+    setFilteredMovies(movieList);
+  }, [movieList]);
 
   // 🔍 SEARCH
   useEffect(() => {

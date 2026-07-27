@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { getAdminOffers, createOffer, updateOffer, deleteOffer } from "../services/offerService";
-import { getMovies } from "../services/movieService";
+import { useOffers } from "../hooks/useOffers";
+import { useMovies } from "../hooks/useMovies";
+import { createOffer, updateOffer, deleteOffer } from "../services/offerService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
 import FormModal from "./components/FormModal";
@@ -8,8 +9,8 @@ import AdminForm from "./components/AdminForm";
 import { getImageUrl } from "../utils/imageHelper";
 
 function AdminOffers() {
-  const [offers, setOffers] = useState([]);
-  const [movies, setMovies] = useState([]);
+  const { offers, setOffers, loadOffers } = useOffers(true);
+  const { movies } = useMovies();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingOffer, setEditingOffer] = useState(null);
 
@@ -23,35 +24,6 @@ function AdminOffers() {
   });
 
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    loadOffers();
-    loadMovies();
-  }, []);
-
-  const loadOffers = async () => {
-    try {
-      const response = await getAdminOffers();
-      const rawData = Array.isArray(response.data)
-        ? response.data
-        : (Array.isArray(response.data?.data) ? response.data.data : []);
-      setOffers(rawData);
-    } catch (error) {
-      console.error("Failed to load offers", error);
-    }
-  };
-
-  const loadMovies = async () => {
-    try {
-      const response = await getMovies();
-      const rawData = Array.isArray(response.data)
-        ? response.data
-        : (Array.isArray(response.data?.data) ? response.data.data : []);
-      setMovies(rawData.filter(m => m.type !== "series"));
-    } catch (error) {
-      console.error("Failed to load movies", error);
-    }
-  };
 
   const validate = () => {
     let newErrors = {};

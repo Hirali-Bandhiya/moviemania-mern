@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { getPlans } from "../../../services/planService";
+import { usePlans } from "../../../hooks/usePlans";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import PlanCard from "../components/PlanCard";
@@ -14,31 +13,8 @@ const normalizePlan = (plan) => ({
 });
 
 function Plans() {
-  const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const loadPlans = async () => {
-      try {
-        const response = await getPlans();
-        const rawData = Array.isArray(response.data)
-          ? response.data
-          : (Array.isArray(response.data?.data) ? response.data.data : []);
-        const plansData = rawData.map(normalizePlan).filter((plan) => plan.active);
-        setPlans(plansData);
-        setError("");
-      } catch (error) {
-        console.error("Failed to load plans", error);
-        setPlans([]);
-        setError("Failed to load subscription plans.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadPlans();
-  }, []);
+  const { plans: rawPlans, loading, error } = usePlans();
+  const plans = rawPlans.map(normalizePlan).filter((plan) => plan.active);
 
   return (
     <div className="bg-[#0f172a] min-h-screen text-white flex flex-col pt-20">

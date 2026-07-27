@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { getUsers, updateUser, deleteUser } from "../services/userService";
+import { useUsers } from "../hooks/useUsers";
+import { updateUser, deleteUser } from "../services/userService";
 import { registerApi } from "../services/authService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
@@ -7,7 +8,7 @@ import AdminModal from "./components/AdminModal";
 import AdminForm from "./components/AdminForm";
 
 function AdminUsers() {
-  const [users, setUsers] = useState([]);
+  const { users, setUsers, loadUsers } = useUsers();
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,15 +35,6 @@ function AdminUsers() {
     setFilteredUsers(filtered);
     setCurrentPage(1);
   }, [searchTerm, users]);
-
-  const loadUsers = async () => {
-    try {
-      const res = await getUsers();
-      setUsers(res.data);
-    } catch (err) {
-      console.error("Failed to fetch users");
-    }
-  };
 
   const validate = () => {
     let newErrors = {};

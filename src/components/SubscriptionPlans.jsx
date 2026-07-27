@@ -1,26 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { getPlans } from "../services/planService";
+import { usePlans } from "../hooks/usePlans";
 
 function SubscriptionPlans() {
   const navigate = useNavigate();
-  const [plans, setPlans] = useState([]);
-
-  useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        const response = await getPlans();
-        const rawData = Array.isArray(response.data)
-          ? response.data
-          : (Array.isArray(response.data?.data) ? response.data.data : []);
-        setPlans(rawData);
-      } catch (error) {
-        console.error("Failed to load plans", error);
-        setPlans([]);
-      }
-    };
-    fetchPlans();
-  }, []);
+  const { plans } = usePlans();
 
   const handleSubscribe = (planId) => {
     navigate(`/payment?plan=${planId}`);

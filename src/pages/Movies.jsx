@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { getMovies } from "../services/movieService";
+import { useMemo, useState } from "react";
+import { useMovies } from "../hooks/useMovies";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import MovieCard from "../components/MovieCard";
@@ -52,35 +52,10 @@ const sortMovies = (movies, sortBy) => {
 };
 
 function Movies() {
-  const [movieData, setMovieData] = useState([]);
+  const { movies: movieData, loading, error } = useMovies();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [sortBy, setSortBy] = useState("featured");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-
-  useEffect(() => {
-    fetchMovies();
-  }, []);
-
-  const fetchMovies = async () => {
-    try {
-      const response = await getMovies();
-      const rawData = Array.isArray(response.data)
-        ? response.data
-        : (Array.isArray(response.data?.data) ? response.data.data : []);
-      const moviesOnly = rawData.filter((movie) => String(movie.type || "").toLowerCase() !== "series");
-      setMovieData(moviesOnly);
-      setError("");
-    } catch (err) {
-      console.warn("[API] Failed to fetch movies", err?.message || err);
-      setMovieData([]);
-      setError("Failed to load movies. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const normalizedCategory = String(category || "All").trim().toLowerCase();
 

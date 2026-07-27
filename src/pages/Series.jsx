@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { getSeries } from "../services/seriesService";
+import { useMemo, useState } from "react";
+import { useSeries } from "../hooks/useSeries";
 import Navbar from "../components/Navbar";
 import MovieCard from "../components/MovieCard";
 import Footer from "../components/Footer";
@@ -73,33 +73,10 @@ const sortSeries = (series, sortBy) => {
 };
 
 function Series() {
-  const [seriesList, setSeriesList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { seriesList, loading, error } = useSeries();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [sortBy, setSortBy] = useState("featured");
-
-  useEffect(() => {
-    const loadSeries = async () => {
-      try {
-        const response = await getSeries();
-        const rawData = Array.isArray(response.data)
-          ? response.data
-          : (Array.isArray(response.data?.data) ? response.data.data : []);
-        setSeriesList(rawData);
-        setError("");
-      } catch (error) {
-        console.error("[API] Failed to load series", error);
-        setSeriesList([]);
-        setError("Failed to load series. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadSeries();
-  }, []);
 
   const normalizedCategory = String(category || "All").trim().toLowerCase();
 

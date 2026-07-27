@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { getSeries, createSeries, updateSeries, deleteSeries } from "../services/seriesService";
+import { useSeries } from "../hooks/useSeries";
+import { createSeries, updateSeries, deleteSeries } from "../services/seriesService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
 import FormModal from "./components/FormModal";
@@ -18,7 +19,7 @@ const imageOptions = Object.keys(imageModules)
   .map((filename) => ({ value: filename, label: filename }));
 
 function AdminSeries() {
-  const [seriesList, setSeriesList] = useState([]);
+  const { seriesList, setSeriesList, loadSeries } = useSeries();
   const [filteredSeries, setFilteredSeries] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [genreFilter, setGenreFilter] = useState("All");
@@ -42,25 +43,9 @@ function AdminSeries() {
 
   const itemsPerPage = 10;
 
-  // Load series from backend
   useEffect(() => {
-    loadSeries();
-  }, []);
-
-  const loadSeries = async () => {
-    try {
-      const response = await getSeries();
-      const seriesOnly = Array.isArray(response.data)
-        ? response.data
-        : (Array.isArray(response.data?.data) ? response.data.data : []);
-      setSeriesList(seriesOnly);
-      setFilteredSeries(seriesOnly);
-    } catch (error) {
-      console.error("Failed to load series", error);
-      setSeriesList([]);
-      setFilteredSeries([]);
-    }
-  };
+    setFilteredSeries(seriesList);
+  }, [seriesList]);
 
   useEffect(() => {
     const normalizedSearch = searchTerm.toLowerCase();

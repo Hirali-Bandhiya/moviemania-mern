@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getOffers } from "../services/offerService";
+import { useOffers } from "../hooks/useOffers";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { isLoggedIn, hasActivePlan } from "../utils/auth";
 import { getImageUrl } from "../utils/imageHelper";
 
 function Offers() {
-  const [offers, setOffers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { offers, loading, error } = useOffers();
   const [filter, setFilter] = useState("all"); // all, top, latest
   const navigate = useNavigate();
 
@@ -17,24 +15,6 @@ function Offers() {
   const [, setTick] = useState(0);
 
   useEffect(() => {
-    const fetchOffers = async () => {
-      try {
-        const response = await getOffers();
-        const rawData = Array.isArray(response.data)
-          ? response.data
-          : (Array.isArray(response.data?.data) ? response.data.data : []);
-        setOffers(rawData);
-        setError("");
-      } catch (error) {
-        console.error("Failed to fetch offers", error);
-        setOffers([]);
-        setError("Failed to load offers. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOffers();
-
     const interval = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(interval);
   }, []);

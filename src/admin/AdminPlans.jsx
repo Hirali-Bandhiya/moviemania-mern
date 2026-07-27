@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { getPlans, createPlan, updatePlan, deletePlan } from "../services/planService";
+import { usePlans } from "../hooks/usePlans";
+import { createPlan, updatePlan, deletePlan } from "../services/planService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
 import FormModal from "./components/FormModal";
@@ -8,45 +9,27 @@ import AdminForm from "./components/AdminForm";
 const defaultPlans = [
   {
     name: "Basic",
-    amount: 499,
-    priceLabel: "₹499 / month",
-    description: "Good video quality in 720p. Watch on any phone, tablet, computer or TV.",
-    isPopular: false,
-    features: [
-      "Access to unlimited movies and TV shows",
-      "Watch on 1 supported device at a time",
-      "Watch in HD (720p)",
-      "Downloads on 1 supported device"
-    ]
+    priceLabel: "₹199 / month",
+    amount: 199,
+    description: "Good video quality in SD (480p). Watch on any 1 phone or tablet at a time.",
+    features: ["Watch on 1 device at a time", "SD Quality (480p)", "Cancel anytime"],
+    isPopular: false
   },
   {
-    name: "Family",
-    amount: 1499,
-    priceLabel: "₹1499 / month",
-    description: "Great video quality in 1080p. Best for small screens and laptops.",
-    isPopular: true,
-    features: [
-      "Access to unlimited movies and TV shows",
-      "Watch on 2 supported devices at a time",
-      "Watch in Full HD (1080p)",
-      "Downloads on 2 supported devices",
-      "Ad-free experience"
-    ]
+    name: "Standard",
+    priceLabel: "₹499 / month",
+    amount: 499,
+    description: "Great video quality in Full HD (1080p). Watch on any 2 screens at the same time.",
+    features: ["Watch on 2 devices at a time", "Full HD Quality (1080p)", "Cancel anytime"],
+    isPopular: true
   },
   {
     name: "Premium",
-    amount: 999,
-    priceLabel: "₹999 / month",
-    description: "Our best video quality in 4K+HDR. The ultimate experience.",
-    isPopular: false,
-    features: [
-      "Access to unlimited movies and TV shows",
-      "Watch on 4 supported devices at a time",
-      "Watch in Ultra HD (4K) and HDR",
-      "Downloads on 6 supported devices",
-      "Ad-free experience",
-      "Spatial audio"
-    ]
+    priceLabel: "₹649 / month",
+    amount: 649,
+    description: "Our best video quality in 4K Ultra HD and HDR. Watch on 4 screens at the same time.",
+    features: ["Watch on 4 devices at a time", "Ultra HD Quality (4K)", "Cancel anytime"],
+    isPopular: false
   }
 ];
 
@@ -56,9 +39,11 @@ const normalizePlan = (plan) => ({
   priceLabel: plan?.priceLabel || `₹${Number(plan?.amount ?? plan?.pricing?.monthly ?? 0)} / month`,
   isPopular: Boolean(plan?.isPopular ?? plan?.popular),
   features: Array.isArray(plan?.features) ? plan.features : [],
+  active: plan?.active !== false,
 });
 
 function AdminPlans() {
+  const { plans: rawPlans, loadPlans } = usePlans();
   const [plansList, setPlans] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,26 +64,11 @@ function AdminPlans() {
 
   const itemsPerPage = 10;
 
-  // Load plans from backend
   useEffect(() => {
-    loadPlans();
-  }, []);
-
-  const loadPlans = async () => {
-    try {
-      const response = await getPlans();
-      const rawData = Array.isArray(response.data)
-        ? response.data
-        : (Array.isArray(response.data?.data) ? response.data.data : []);
-      const plansData = rawData.length > 0 ? rawData.map(normalizePlan) : defaultPlans;
-      setPlans(plansData);
-      setFilteredPlans(plansData);
-    } catch (error) {
-      console.error("Failed to load plans", error);
-      setPlans(defaultPlans);
-      setFilteredPlans(defaultPlans);
-    }
-  };
+    const plansData = rawPlans.length > 0 ? rawPlans.map(normalizePlan) : defaultPlans;
+    setPlans(plansData);
+    setFilteredPlans(plansData);
+  }, [rawPlans]);
 
   // SEARCH
   useEffect(() => {
