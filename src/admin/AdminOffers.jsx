@@ -7,6 +7,7 @@ import AdminNavbar from "./components/AdminNavbar";
 import FormModal from "./components/FormModal";
 import AdminForm from "./components/AdminForm";
 import { getImageUrl } from "../utils/imageHelper";
+import { formatDate, formatPrice } from "../utils/formatters";
 
 function AdminOffers() {
   const { offers, setOffers, loadOffers } = useOffers(true);
@@ -163,9 +164,9 @@ function AdminOffers() {
                         {offer.discountType === 'percentage' ? `${offer.discountValue}% OFF` : `$${offer.discountValue} OFF`}
                       </span>
                     </td>
-                    <td className="p-4 text-white font-bold">${offer.finalPrice?.toFixed(2)}</td>
+                    <td className="p-4 text-white font-bold">{formatPrice(offer.finalPrice)}</td>
                     <td className="p-4 text-gray-400">
-                      {new Date(offer.validTill).toLocaleDateString()}
+                      {formatDate(offer.validTill)}
                     </td>
                     <td className="p-4">
                       <span className={`px-2 py-1 rounded text-xs font-bold ${offer.isActive ? 'bg-blue-500/20 text-blue-400' : 'bg-red-500/20 text-red-400'}`}>

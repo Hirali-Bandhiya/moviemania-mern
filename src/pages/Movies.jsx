@@ -7,53 +7,7 @@ import SectionHeader from "../components/SectionHeader";
 import LoadingSpinner from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
 import SearchBar from "../components/SearchBar";
-
-const BOLLYWOOD_TITLE_SET = new Set([
-  "pathaan",
-  "war",
-  "kgf chapter 2",
-  "3 idiots",
-  "gol maal",
-  "golmaal",
-  "welcome",
-  "dhamaal",
-  "rrr",
-  "mirzapur",
-  "sacred games",
-]);
-
-const resolveMovieIndustry = (movie) => {
-  const directIndustry = String(movie.industry || movie.category || "").trim().toLowerCase();
-
-  if (directIndustry === "hollywood" || directIndustry === "bollywood") {
-    return directIndustry;
-  }
-
-  const title = String(movie.title || "").trim().toLowerCase();
-  if (BOLLYWOOD_TITLE_SET.has(title)) {
-    return "bollywood";
-  }
-
-  return "hollywood";
-};
-
-const sortMovies = (movies, sortBy) => {
-  const items = [...movies];
-
-  if (sortBy === "rating-desc") {
-    return items.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
-  }
-
-  if (sortBy === "year-desc") {
-    return items.sort((a, b) => Number(b.year || 0) - Number(a.year || 0));
-  }
-
-  if (sortBy === "year-asc") {
-    return items.sort((a, b) => Number(a.year || 0) - Number(b.year || 0));
-  }
-
-  return items;
-};
+import { resolveMovieIndustry, sortCatalogItems } from "../utils/catalogUtils";
 
 function Movies() {
   const { movies: movieData, loading, error } = useMovies();
@@ -84,7 +38,7 @@ function Movies() {
         ? searchFilteredMovies
         : searchFilteredMovies.filter((movie) => resolveMovieIndustry(movie) === normalizedCategory);
 
-    return sortMovies(categoryFilteredMovies, sortBy);
+    return sortCatalogItems(categoryFilteredMovies, sortBy);
   }, [movieData, normalizedCategory, search, sortBy]);
 
   return (

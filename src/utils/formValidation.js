@@ -2,7 +2,7 @@
 // Validation utilities for forms
 
 export const validateRequired = (value) => {
-  return value.trim() !== "" ? "" : "This field is required";
+  return String(value || "").trim() !== "" ? "" : "This field is required";
 };
 
 export const validateEmail = (email) => {
@@ -11,7 +11,18 @@ export const validateEmail = (email) => {
 };
 
 export const validateNumeric = (value) => {
-  return !isNaN(value) && value > 0 ? "" : "Must be a positive number";
+  return !isNaN(value) && Number(value) > 0 ? "" : "Must be a positive number";
+};
+
+export const validatePositiveNumber = (value) => {
+  const num = Number(value);
+  return !isNaN(num) && num > 0;
+};
+
+export const validateDate = (value) => {
+  if (!value) return false;
+  const d = new Date(value);
+  return !isNaN(d.getTime());
 };
 
 export const validateForm = (fields) => {

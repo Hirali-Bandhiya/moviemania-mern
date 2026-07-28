@@ -13,6 +13,7 @@ import { updateContinueWatching } from "../utils/continueWatching";
 import { resolvePlaybackUrl, resolveTrailerUrl } from "../utils/mediaResolver";
 import { isLoggedIn, hasActivePlan } from "../utils/auth";
 import { requiresSubscriptionForContent } from "../utils/accessControl";
+import { normalizeText } from "../utils/formatters";
 import {
   addToWishlistStore,
   removeFromWishlistStore,
@@ -79,7 +80,6 @@ function MovieDetails() {
     };
   }, [id]);
 
-  const normalizeText = (value) => String(value || "").trim().toLowerCase();
   const localFallbackMovie = localData.find((item) => {
     const sameId = String(item._id || item.id) === String(movie?._id || movie?.id || id);
     const sameTitle = normalizeText(item.title) === normalizeText(movie?.title);

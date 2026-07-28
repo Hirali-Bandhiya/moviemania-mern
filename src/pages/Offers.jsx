@@ -7,6 +7,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
 import OfferCard from "../components/OfferCard";
 import { isLoggedIn, hasActivePlan } from "../utils/auth";
+import { getCountdown } from "../utils/formatters";
 
 function Offers() {
   const { offers, loading, error } = useOffers();
@@ -35,23 +36,6 @@ function Offers() {
         navigate(`/movie/${offer.movieId._id}`);
       }
     }
-  };
-
-  const getCountdown = (validTill) => {
-    const now = new Date();
-    const expiry = new Date(validTill);
-    const diff = expiry - now;
-
-    if (diff <= 0) return "EXPIRED";
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((diff / 1000 / 60) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
-
-    if (days > 0) return `${days}d ${hours}h left`;
-    if (hours > 0) return `${hours}h ${minutes}m left`;
-    return `${minutes}m ${seconds}s left`;
   };
 
   const filteredOffers = [...offers]

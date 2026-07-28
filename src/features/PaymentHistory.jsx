@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getMyPayments } from "../services/paymentService";
+import { formatDate } from "../utils/formatters";
 
 function PaymentHistory() {
   const [history, setHistory] = useState([]);
@@ -62,7 +63,7 @@ function PaymentHistory() {
             <div>
               <p className="text-white font-semibold">{item.subscriptionPlan || item.plan} Plan</p>
               <p className="text-gray-300 text-sm">
-                Paid on {new Date(item.paymentDate || item.transactionDate || item.createdAt || Date.now()).toLocaleDateString()}
+                Paid on {formatDate(item.paymentDate || item.transactionDate || item.createdAt || Date.now())}
               </p>
             </div>
             <p className="text-white font-semibold">₹{item.amount}</p>

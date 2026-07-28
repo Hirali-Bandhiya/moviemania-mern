@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react";
 import { useEffect, useState } from "react";
 import movies from "../data/movies";
 import { getMovies, getMovieById } from "../services/movieService";
@@ -8,6 +8,7 @@ import { getImageUrl } from "../utils/imageHelper";
 import { resolvePlaybackUrl, resolveTrailerUrl } from "../utils/mediaResolver";
 import { isLoggedIn, hasActivePlan } from "../utils/auth";
 import { requiresSubscriptionForContent } from "../utils/accessControl";
+import { normalizeText } from "../utils/formatters";
 import {
   addToWishlistStore,
   removeFromWishlistStore,
@@ -45,9 +46,6 @@ function WatchMovie() {
     const match = value.match(regExp);
     return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1&rel=0` : null;
   };
-
-  const isYoutubeUrl = (url) => /(?:youtube\.com|youtu\.be)/i.test(String(url || ""));
-
 
   useEffect(() => {
     let active = true;
@@ -108,7 +106,6 @@ function WatchMovie() {
     return `${hours}h ${minutes}m`;
   };
 
-  const normalizeText = (value) => String(value || "").trim().toLowerCase();
   const localFallbackMovie = movies.find((item) => {
     const sameId = String(item._id || item.id) === String(movie?._id || movie?.id || id);
     const sameTitle = normalizeText(item.title) === normalizeText(movie?.title);

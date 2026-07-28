@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getAdminPayments } from "../services/paymentService";
 import AdminSidebar from "./components/AdminSidebar";
 import AdminNavbar from "./components/AdminNavbar";
+import { formatDate } from "../utils/formatters";
 
 function AdminPayments() {
   const [payments, setPayments] = useState([]);
@@ -107,7 +108,7 @@ function AdminPayments() {
                         ₹{payment.amount}
                       </td>
                       <td className="p-4 text-gray-400">
-                        {new Date(payment.transactionDate).toLocaleDateString()}
+                        {formatDate(payment.transactionDate)}
                       </td>
                       <td className="p-4">
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${

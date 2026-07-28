@@ -7,74 +7,7 @@ import SectionHeader from "../components/SectionHeader";
 import LoadingSpinner from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
 import SearchBar from "../components/SearchBar";
-
-const BOLLYWOOD_TITLE_SET = new Set([
-  "mirzapur",
-  "sacred games",
-  "the family man",
-  "panchayat",
-  "asur",
-  "farzi",
-  "scam 1992",
-  "kota factory",
-  "delhi crime",
-]);
-
-const BOLLYWOOD_IMAGE_HINT_SET = new Set([
-  "mirzapur",
-  "sacredgames",
-  "golmaal",
-  "welcome",
-  "dhamaal",
-  "3idiots",
-  "idiots",
-  "pathaan",
-  "war",
-  "kgf",
-  "rrr",
-]);
-
-const resolveSeriesIndustry = (item) => {
-  const title = String(item.title || "").trim().toLowerCase();
-  const directCategory = String(item.category || "").trim().toLowerCase();
-  const directIndustry = String(item.industry || "").trim().toLowerCase();
-  const imageName = String(item.image || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\.[a-z0-9]+$/i, "");
-
-  if (directCategory === "bollywood" || directIndustry === "bollywood") {
-    return "bollywood";
-  }
-
-  if (BOLLYWOOD_TITLE_SET.has(title)) {
-    return "bollywood";
-  }
-
-  if (BOLLYWOOD_IMAGE_HINT_SET.has(imageName)) {
-    return "bollywood";
-  }
-
-  return "hollywood";
-};
-
-const sortSeries = (series, sortBy) => {
-  const items = [...series];
-
-  if (sortBy === "rating-desc") {
-    return items.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
-  }
-
-  if (sortBy === "year-desc") {
-    return items.sort((a, b) => Number(b.year || 0) - Number(a.year || 0));
-  }
-
-  if (sortBy === "year-asc") {
-    return items.sort((a, b) => Number(a.year || 0) - Number(b.year || 0));
-  }
-
-  return items;
-};
+import { resolveSeriesIndustry, sortCatalogItems } from "../utils/catalogUtils";
 
 function Series() {
   const { seriesList, loading, error } = useSeries();
@@ -105,7 +38,7 @@ function Series() {
         ? searchFilteredSeries
         : searchFilteredSeries.filter((item) => resolveSeriesIndustry(item) === normalizedCategory);
 
-    return sortSeries(categoryFilteredSeries, sortBy);
+    return sortCatalogItems(categoryFilteredSeries, sortBy);
   }, [seriesList, normalizedCategory, search, sortBy]);
 
   return (

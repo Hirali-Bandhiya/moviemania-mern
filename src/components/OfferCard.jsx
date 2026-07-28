@@ -1,4 +1,5 @@
 import { getImageUrl } from "../utils/imageHelper";
+import { formatDate, formatPrice } from "../utils/formatters";
 
 function OfferCard({ offer, onClick, getCountdown }) {
   const isExpired = new Date(offer.validTill) < new Date();
@@ -59,15 +60,15 @@ function OfferCard({ offer, onClick, getCountdown }) {
         <div className="mt-2 flex items-end justify-between border-t border-white/10 pt-3">
           <div className="flex flex-col">
             <span className="text-xs text-gray-500 line-through">
-              ${movie.price || 99}
+              {formatPrice(movie.price || 99)}
             </span>
             <span className="text-xl font-black text-red-500 drop-shadow-md">
-              ${offer.finalPrice?.toFixed(2)}
+              {formatPrice(offer.finalPrice)}
             </span>
           </div>
           <div className="text-right">
             <div className="text-xs font-semibold text-white bg-white/10 px-2 py-1 rounded border border-white/5">
-              {new Date(offer.validTill).toLocaleDateString()}
+              {formatDate(offer.validTill)}
             </div>
           </div>
         </div>
