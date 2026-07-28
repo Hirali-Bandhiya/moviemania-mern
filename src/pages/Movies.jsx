@@ -2,7 +2,11 @@ import { useMemo, useState } from "react";
 import { useMovies } from "../hooks/useMovies";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import MovieCard from "../components/MovieCard";
+import MovieGrid from "../components/MovieGrid";
+import SectionHeader from "../components/SectionHeader";
+import LoadingSpinner from "../components/LoadingSpinner";
+import EmptyState from "../components/EmptyState";
+import SearchBar from "../components/SearchBar";
 
 const BOLLYWOOD_TITLE_SET = new Set([
   "pathaan",
@@ -90,16 +94,12 @@ function Movies() {
       <div className="pt-24 px-6 lg:px-12 flex-1 pb-16">
 
         {/* Page Title */}
-        <h1 className="text-4xl font-bold mb-10 mt-4">
-          All Movies
-        </h1>
+        <SectionHeader title="All Movies" level={1} />
 
         {/* Controls */}
         <div className="flex flex-col md:flex-row gap-6 mb-12 items-center">
-          <input
-            type="text"
+          <SearchBar
             placeholder="Search movies..."
-            className="w-full md:w-1/3 px-5 py-3 rounded-xl bg-white/10 text-white border border-white/10 focus:ring-2 focus:ring-red-600 outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -134,27 +134,18 @@ function Movies() {
 
         {/* Content State */}
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-          </div>
+          <LoadingSpinner />
         ) : error ? (
-          <div className="text-center py-20">
-            <p className="text-red-400 text-lg">{error}</p>
-          </div>
+          <EmptyState message={error} error />
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-            {moviesToRender.map(movie => (
-              <MovieCard key={movie._id || movie.id} movie={movie} requirePlanForAccess={movie.requirePlanForAccess} />
-            ))}
-          </div>
+          <MovieGrid
+            movies={moviesToRender}
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
+          />
         )}
 
         {!loading && !error && moviesToRender.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-gray-400 text-lg">
-              No movies found please try different search terms or filters.
-            </p>
-          </div>
+          <EmptyState message="No movies found please try different search terms or filters." />
         )}
 
       </div>

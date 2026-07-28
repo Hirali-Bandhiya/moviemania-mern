@@ -3,7 +3,9 @@ import { getMovies } from "../services/movieService";
 import { getSeries } from "../services/seriesService";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import MovieCard from "../components/MovieCard";
+import MovieGrid from "../components/MovieGrid";
+import SectionHeader from "../components/SectionHeader";
+import EmptyState from "../components/EmptyState";
 import movies from "../data/movies";
 import { mapContinueMovies } from "../utils/continueWatching";
 import { getWatchlist } from "../utils/watchlist";
@@ -76,12 +78,13 @@ function Dashboard() {
         <div className="max-w-[1440px] mx-auto">
           
           {/* Header */}
-          <h1 className="text-4xl font-black mb-2">
-            Welcome to <span className="text-red-600">Dashboard</span>
-          </h1>
-          <p className="text-gray-400 mb-12">
-            Your personalized streaming experience
-          </p>
+          <SectionHeader
+            title="Welcome to Dashboard"
+            highlight="Dashboard"
+            subtitle="Your personalized streaming experience"
+            level={1}
+            titleClassName="text-4xl font-black mb-2"
+          />
 
           {/* Featured Movies & Series */}
           <section className="mb-16">
@@ -96,106 +99,58 @@ function Dashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-gray-300">Top Movies</h3>
-                <div className="flex flex-wrap gap-8">
-                  {featuredMovies.map((movie) => (
-                    <MovieCard key={movie._id || movie.id} movie={movie} />
-                  ))}
-                </div>
+                <SectionHeader title="Top Movies" level={3} />
+                <MovieGrid movies={featuredMovies} className="flex flex-wrap gap-8" />
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-gray-300">Top Series</h3>
-                <div className="flex flex-wrap gap-8">
-                  {featuredSeries.map((series) => (
-                    <MovieCard key={series._id || series.id} movie={series} />
-                  ))}
-                </div>
+                <SectionHeader title="Top Series" level={3} />
+                <MovieGrid movies={featuredSeries} className="flex flex-wrap gap-8" />
               </div>
             </div>
           </section>
 
           {/* Continue Watching */}
           <section className="mb-16">
-            <h2 className="text-2xl font-bold mb-6">
-              Continue <span className="text-red-600">Watching</span>
-            </h2>
+            <SectionHeader title="Continue Watching" highlight="Watching" level={2} titleClassName="text-2xl font-bold mb-6" />
             {continueWatching.length === 0 ? (
-              <div>
-                <div className="flex flex-wrap gap-8 mb-8">
-                  {featuredMovies.map((movie) => (
-                    <MovieCard key={movie._id || movie.id} movie={movie} />
-                  ))}
-                </div>
-              </div>
+              <MovieGrid movies={featuredMovies} className="flex flex-wrap gap-8 mb-8" />
             ) : (
-              <div className="flex flex-wrap gap-8 mb-8">
-                {continueWatching.map((movie) => (
-                  <MovieCard key={movie._id || movie.id} movie={movie} />
-                ))}
-              </div>
+              <MovieGrid movies={continueWatching} className="flex flex-wrap gap-8 mb-8" />
             )}
           </section>
 
           {/* My List */}
           <section className="mb-16">
-            <h2 className="text-2xl font-bold mb-6">
-              My <span className="text-red-600">List</span>
-            </h2>
+            <SectionHeader title="My List" highlight="List" level={2} titleClassName="text-2xl font-bold mb-6" />
             {watchlist.length === 0 ? (
-              <p className="text-gray-400 mb-8">
-                Your watchlist is empty. Add movies to get started!
-              </p>
+              <EmptyState message="Your watchlist is empty. Add movies to get started!" className="text-left mb-8" />
             ) : (
-              <div className="flex flex-wrap gap-8 mb-8">
-                {watchlist.map((movie) => (
-                  <MovieCard key={movie._id || movie.id} movie={movie} />
-                ))}
-              </div>
+              <MovieGrid movies={watchlist} className="flex flex-wrap gap-8 mb-8" />
             )}
           </section>
 
           {/* Trending Movies */}
           <section className="mb-16">
-            <h2 className="text-2xl font-bold mb-6">
-              <span className="text-red-600">Trending</span> Now
-            </h2>
-            <div className="flex flex-wrap gap-8 mb-8">
-              {trendingMovies.map((movie) => (
-                <MovieCard key={movie._id || movie.id} movie={movie} />
-              ))}
-            </div>
+            <SectionHeader title="Trending Now" highlight="Trending" level={2} titleClassName="text-2xl font-bold mb-6" />
+            <MovieGrid movies={trendingMovies} className="flex flex-wrap gap-8 mb-8" />
           </section>
 
           {/* Recently Watched */}
           {recentlyWatched.length > 0 && (
             <section className="mb-16">
-              <h2 className="text-2xl font-bold mb-6">
-                Recently <span className="text-red-600">Watched</span>
-              </h2>
-              <div className="flex flex-wrap gap-8">
-                {recentlyWatched.map((movie) => (
-                  <MovieCard key={movie._id || movie.id} movie={movie} />
-                ))}
-              </div>
+              <SectionHeader title="Recently Watched" highlight="Watched" level={2} titleClassName="text-2xl font-bold mb-6" />
+              <MovieGrid movies={recentlyWatched} className="flex flex-wrap gap-8" />
             </section>
           )}
 
           {/* Recommended */}
           <section className="mb-16">
-            <h2 className="text-2xl font-bold mb-6">
-              Recommended for <span className="text-red-600">You</span>
-            </h2>
+            <SectionHeader title="Recommended for You" highlight="You" level={2} titleClassName="text-2xl font-bold mb-6" />
             {recommendedMovies.length > 0 ? (
-              <div className="flex flex-wrap gap-8">
-                {recommendedMovies.map((movie) => (
-                  <MovieCard key={movie._id || movie.id} movie={movie} />
-                ))}
-              </div>
+              <MovieGrid movies={recommendedMovies} className="flex flex-wrap gap-8" />
             ) : (
-              <p className="text-gray-400">
-                Watch some movies to get personalised suggestions.
-              </p>
+              <EmptyState message="Watch some movies to get personalised suggestions." className="text-left" />
             )}
           </section>
 

@@ -1,9 +1,12 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react";
 import { useEffect, useState } from "react";
 import localData from "../data/movies";
 import { getMovies, getMovieById } from "../services/movieService";
 import { getSeries, getSeriesById } from "../services/seriesService";
-import MovieCard from "../components/MovieCard";
+import MovieGrid from "../components/MovieGrid";
+import SectionHeader from "../components/SectionHeader";
+import LoadingSpinner from "../components/LoadingSpinner";
+import EmptyState from "../components/EmptyState";
 import { Star, ArrowLeft, Play } from "lucide-react";
 import { getImageUrl } from "../utils/imageHelper";
 import { updateContinueWatching } from "../utils/continueWatching";
@@ -172,18 +175,15 @@ function MovieDetails() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-      </div>
-    );
+    return <LoadingSpinner className="min-h-screen bg-black text-white" />;
   }
 
   if (!movie) {
     return (
-      <div className="min-h-screen bg-black text-white p-20 text-center font-bold text-xl">
-        Movie/Series Not Founded...
-      </div>
+      <EmptyState
+        message="Movie/Series Not Founded..."
+        className="min-h-screen bg-black text-white p-20 flex items-center justify-center font-bold text-xl"
+      />
     );
   }
 
@@ -335,12 +335,11 @@ function MovieDetails() {
 
           {relatedMovies.length > 0 && (
             <div className="mt-16">
-              <h2 className="text-3xl font-bold mb-8">Related Movies</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-                {relatedMovies.map((item) => (
-                  <MovieCard key={item._id || item.id} movie={item} requirePlanForAccess={item.requirePlanForAccess} />
-                ))}
-              </div>
+              <SectionHeader title="Related Movies" level={2} className="mb-8" />
+              <MovieGrid
+                movies={relatedMovies}
+                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6"
+              />
             </div>
           )}
         </div>

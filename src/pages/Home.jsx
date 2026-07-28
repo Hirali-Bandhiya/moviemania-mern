@@ -4,7 +4,10 @@ import { getMovies } from "../services/movieService";
 import UnlimitedSeries from "../components/UnlimitedSeries";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
-import MovieCard from "../components/MovieCard";
+import MovieGrid from "../components/MovieGrid";
+import SectionHeader from "../components/SectionHeader";
+import EmptyState from "../components/EmptyState";
+import SearchBar from "../components/SearchBar";
 import PopularSection from "../components/PopularSection";
 import Footer from "../components/Footer";
 import localMoviesData from "../data/movies";
@@ -85,41 +88,30 @@ function Home() {
         {/* CONTINUE WATCHING */}
         {isLoggedIn && continueWatching.length > 0 && (
           <section className="px-8 lg:px-12 mt-16 pb-16">
-            <h2 className="text-3xl font-bold mb-8">
-              Continue <span className="text-red-600">Watching</span>
-            </h2>
-            <div className="flex gap-6 overflow-x-auto pb-4">
-              {continueWatching.map((movie) => (
-                <MovieCard 
-                  key={movie._id} 
-                  movie={movie} 
-                  onRemoveFromContinue={() => handleRemoveFromContinue(movie._id || movie.id)}
-                />
-              ))}
-            </div>
+            <SectionHeader title="Continue Watching" highlight="Watching" />
+            <MovieGrid
+              movies={continueWatching}
+              className="flex gap-6 overflow-x-auto pb-4"
+              onRemoveFromContinue={handleRemoveFromContinue}
+            />
           </section>
         )}
 
         {/* RECENTLY WATCHED */}
         {recentlyWatched.length > 0 && (
           <section className="px-8 lg:px-12 mt-12 pb-16">
-            <h2 className="text-3xl font-bold mb-8">
-              Recently <span className="text-red-600">Watched</span>
-            </h2>
-            <div className="flex gap-6 overflow-x-auto pb-4">
-              {recentlyWatched.map((movie) => (
-                <MovieCard key={movie._id} movie={movie} />
-              ))}
-            </div>
+            <SectionHeader title="Recently Watched" highlight="Watched" />
+            <MovieGrid
+              movies={recentlyWatched}
+              className="flex gap-6 overflow-x-auto pb-4"
+            />
           </section>
         )}
 
         {/* SEARCH */}
         <div className="px-8 lg:px-12 mt-16">
-          <input
-            type="text"
+          <SearchBar
             placeholder="Search movies..."
-            className="w-full md:w-1/3 px-5 py-3 rounded-xl bg-white/10 text-white border border-white/10 focus:ring-2 focus:ring-red-600 outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -144,20 +136,15 @@ function Home() {
 
         {/* MOVIES */}
         <section className="px-8 lg:px-12 pb-24 mt-12">
-          <h2 className="text-3xl font-bold mb-8">
-            Movies
-          </h2>
+          <SectionHeader title="Movies" />
 
-          <div className="flex gap-6 overflow-x-auto pb-4">
-            {filteredMovies.map(movie => (
-              <MovieCard key={movie._id} movie={movie} />
-            ))}
-          </div>
+          <MovieGrid
+            movies={filteredMovies}
+            className="flex gap-6 overflow-x-auto pb-4"
+          />
 
           {filteredMovies.length === 0 && (
-            <p className="mt-6 text-gray-400">
-              No movies found.
-            </p>
+            <EmptyState message="No movies found." className="mt-6 text-left" />
           )}
         </section>
 

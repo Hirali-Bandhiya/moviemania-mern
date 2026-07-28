@@ -1,8 +1,12 @@
 import { useMemo, useState } from "react";
 import { useSeries } from "../hooks/useSeries";
 import Navbar from "../components/Navbar";
-import MovieCard from "../components/MovieCard";
 import Footer from "../components/Footer";
+import MovieGrid from "../components/MovieGrid";
+import SectionHeader from "../components/SectionHeader";
+import LoadingSpinner from "../components/LoadingSpinner";
+import EmptyState from "../components/EmptyState";
+import SearchBar from "../components/SearchBar";
 
 const BOLLYWOOD_TITLE_SET = new Set([
   "mirzapur",
@@ -109,22 +113,20 @@ function Series() {
       <Navbar />
 
       <main className="pt-24 px-6 lg:px-12 flex-1 pb-16">
-        <h1 className="text-4xl font-bold mb-10 mt-4">All Series</h1>
+        <SectionHeader title="All Series" level={1} />
 
         {/* Controls */}
         <div className="flex flex-col md:flex-row gap-6 mb-12 items-center">
-          <input
-            type="text"
+          <SearchBar
             placeholder="Search series..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-1/3 px-5 py-3 rounded-xl bg-white/10 border border-white/10 focus:ring-2 focus:ring-red-600 outline-none"
           />
 
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full md:w-56 px-5 py-3 rounded-xl bg-white/10 border border-white/10 focus:ring-2 focus:ring-red-600 outline-none"
+            className="w-full md:w-56 px-5 py-3 rounded-xl bg-white/10 border border-white/10 focus:ring-2 focus:ring-red-600 outline-none text-white"
           >
             <option value="featured" className="bg-black">Featured</option>
             <option value="rating-desc" className="bg-black">Rating: High to Low</option>
@@ -151,19 +153,16 @@ function Series() {
 
         {/* Series Grid */}
         {loading ? (
-          <div className="text-center py-20 text-gray-400">Loading series...</div>
+          <LoadingSpinner message="Loading series..." />
         ) : error ? (
-          <div className="text-center py-20 text-red-400">{error}</div>
+          <EmptyState message={error} error />
         ) : seriesToRender.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
-            {seriesToRender.map(series => (
-              <MovieCard key={series._id || series.id} movie={series} requirePlanForAccess={series.requirePlanForAccess} />
-            ))}
-          </div>
+          <MovieGrid
+            movies={seriesToRender}
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8"
+          />
         ) : (
-          <div className="text-center py-20 text-gray-400">
-            No series found matching your search or filters.
-          </div>
+          <EmptyState message="No series found matching your search or filters." />
         )}
       </main>
 
