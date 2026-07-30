@@ -1,13 +1,15 @@
 import { Navigate } from "react-router-dom";
-import { getCurrentUser, isLoggedIn } from "../utils/auth";
-
+import { getCurrentUser, isLoggedIn, isAdminUser } from "../utils/auth";
+import { ROUTES } from "../constants/routes";
 
 function AdminProtectedRoute({ children }) {
   const user = getCurrentUser();
 
-  if (!isLoggedIn() || (user?.isAdmin !== true && user?.role !== "Admin")) {
-    return <Navigate to="/admin-login" />;
+  if (!isLoggedIn() || !isAdminUser(user)) {
+    return <Navigate to={ROUTES.ADMIN_LOGIN || "/admin-login"} replace />;
   }
+
   return children;
 }
-export default AdminProtectedRoute;
+
+export default AdminProtectedRoute;

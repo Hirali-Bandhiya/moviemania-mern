@@ -30,12 +30,7 @@ import AdminProtectedRoute from "./admin/AdminProtectedRoute";
 import Payment from "./pages/Payment";
 import Wishlist from "./features/wishlist/pages/Wishlist";
 
-import { isLoggedIn } from "./utils/auth";
 import { ROUTES } from "./constants/routes";
-
-const LoginProtectedRoute = ({ children }) => {
-  return isLoggedIn() ? children : <Navigate to={ROUTES.LOGIN} replace />;
-};
 
 function App() {
   return (
@@ -57,7 +52,7 @@ function App() {
         <Route path={ROUTES.TV_SHOWS} element={<Navigate to={ROUTES.HOME} replace />} />
         <Route path={ROUTES.OFFERS} element={<Offers />} />
 
-        <Route path={ROUTES.WISHLIST} element={<LoginProtectedRoute><Wishlist /></LoginProtectedRoute>} />
+        <Route path={ROUTES.WISHLIST} element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
         
         <Route
           path={ROUTES.MOVIES}

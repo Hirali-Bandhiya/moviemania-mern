@@ -1,10 +1,11 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { isLoggedIn, hasActivePlan } from "../utils/auth";
+import { ROUTES } from "../constants/routes";
 
 function ProtectedRoute({
   children,
   requirePlan = false,
-  unauthenticatedRedirect = "/login",
+  unauthenticatedRedirect = ROUTES.LOGIN,
   unauthenticatedState = undefined,
 }) {
   const location = useLocation();
@@ -16,7 +17,7 @@ function ProtectedRoute({
   }
 
   if (requirePlan && !activePlan) {
-    return <Navigate to="/plans" replace />;
+    return <Navigate to={ROUTES.PLANS} replace />;
   }
 
   return children;

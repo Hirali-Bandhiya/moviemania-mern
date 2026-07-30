@@ -5,12 +5,27 @@ const TOKEN_KEY = STORAGE_KEYS.TOKEN;
 const USER_KEY = STORAGE_KEYS.CURRENT_USER;
 const CHECKOUT_PENDING_KEY = STORAGE_KEYS.CHECKOUT_PENDING;
 
-const safeParse = (value) => {
+export const safeParse = (value) => {
   try {
     return value ? JSON.parse(value) : null;
   } catch {
     return null;
   }
+};
+
+export const isTokenExpired = (token) => {
+  if (!token || typeof token !== "string") return false;
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) return false;
+    const payload = JSON.parse(atob(parts[1].replace(/-/g, "+").replace(/_/g, "/")));
+    if (payload && typeof payload.exp === "number") {
+      return payload.exp * 1000 < Date.now();
+    }
+  } catch {
+    return false;
+  }
+  return false;
 };
 
 export const getAuthToken = () => localStorage.getItem(TOKEN_KEY);
@@ -58,12 +73,22 @@ export const getCurrentUser = () => {
   return safeParse(localStorage.getItem(USER_KEY));
 };
 
+export const isAdminUser = (user = getCurrentUser()) => {
+  if (!user) return false;
+  return user.isAdmin === true || user.role === "Admin" || user.role === "admin";
+};
+
 export const isLoggedIn = () => {
   if (isCheckoutPending()) {
     return false;
   }
 
   const token = getAuthToken();
+  if (token && isTokenExpired(token)) {
+    logout();
+    return false;
+  }
+
   const currentUser = getCurrentUser();
   // Backward compatibility: older sessions may store token on currentUser.
   return Boolean(token || currentUser?.token || currentUser?._id || currentUser?.email);
