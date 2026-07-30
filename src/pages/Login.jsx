@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { loginUser } from "../utils/auth";
+import { sanitizeInput } from "../utils/formValidation";
 
 function Login() {
   const navigate = useNavigate();
@@ -21,7 +22,9 @@ function Login() {
   const validate = () => {
     let newErrors = {};
 
-    if (!form.email) newErrors.email = "Email cannot be blank.";
+    const cleanEmail = sanitizeInput(form.email);
+
+    if (!cleanEmail) newErrors.email = "Email cannot be blank.";
     if (!form.password) newErrors.password = "Password cannot be a blank.";
 
     setErrors(newErrors);
@@ -35,7 +38,7 @@ function Login() {
       setLoading(true);
       setLoginError("");
 
-      const result = await loginUser(form.email.trim(), form.password);
+      const result = await loginUser(sanitizeInput(form.email), form.password);
 
       if (!result.success) {
         setLoginError(result.message);

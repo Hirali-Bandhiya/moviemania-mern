@@ -1,13 +1,38 @@
 // formValidation.js
-// Validation utilities for forms
+// Centralized validation and input sanitization utilities for forms
+
+export const sanitizeInput = (value) => {
+  if (typeof value !== "string") return value;
+  // Trim leading/trailing whitespace and strip dangerous HTML/script tags client-side
+  return value
+    .trim()
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<[^>]+>/g, "");
+};
+
+export const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(String(email || "").trim());
+};
 
 export const validateRequired = (value) => {
   return String(value || "").trim() !== "" ? "" : "This field is required";
 };
 
 export const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email) ? "" : "Invalid email format";
+  return isValidEmail(email) ? "" : "Invalid email format";
+};
+
+export const validatePassword = (password, minLength = 6) => {
+  if (!password) return "Password cannot be blank.";
+  if (password.length < minLength) return `Password must be at least ${minLength} characters.`;
+  return "";
+};
+
+export const validateConfirmPassword = (password, confirmPassword) => {
+  if (!confirmPassword) return "Confirm Password cannot be blank.";
+  if (password !== confirmPassword) return "Passwords do not match.";
+  return "";
 };
 
 export const validateNumeric = (value) => {

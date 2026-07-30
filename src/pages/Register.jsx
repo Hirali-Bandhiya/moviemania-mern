@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { registerUser, markCheckoutPending } from "../utils/auth";
 import { readPendingPlanSelection } from "../utils/planSelection";
+import { isValidEmail, validatePassword, validateConfirmPassword, sanitizeInput } from "../utils/formValidation";
 
 function Register() {
   const navigate = useNavigate();
@@ -24,31 +25,30 @@ function Register() {
   const [registerError, setRegisterError] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState("");
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
   const validate = () => {
     let newErrors = {};
 
-    if (!form.name.trim()) {
+    const nameClean = sanitizeInput(form.name);
+    const emailClean = sanitizeInput(form.email);
+
+    if (!nameClean) {
       newErrors.name = "Name cannot be blank.";
     }
 
-    if (!form.email.trim()) {
+    if (!emailClean) {
       newErrors.email = "Email cannot be blank.";
-    } else if (!emailRegex.test(form.email)) {
+    } else if (!isValidEmail(emailClean)) {
       newErrors.email = "Enter a valid email address.";
     }
 
-    if (!form.password) {
-      newErrors.password = "Password cannot be blank.";
-    } else if (form.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters.";
+    const passError = validatePassword(form.password);
+    if (passError) {
+      newErrors.password = passError;
     }
 
-    if (!form.confirmPassword) {
-      newErrors.confirmPassword = "Confirm Password cannot be blank.";
-    } else if (form.password !== form.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match.";
+    const confirmError = validateConfirmPassword(form.password, form.confirmPassword);
+    if (confirmError) {
+      newErrors.confirmPassword = confirmError;
     }
 
     setErrors(newErrors);
@@ -65,8 +65,8 @@ function Register() {
       setLoading(true);
 
       const result = await registerUser({
-        name: form.name.trim(),
-        email: form.email.trim(),
+        name: sanitizeInput(form.name),
+        email: sanitizeInput(form.email),
         password: form.password,
       });
 

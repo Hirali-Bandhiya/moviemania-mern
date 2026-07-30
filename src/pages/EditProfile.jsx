@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { getCurrentUser, updateCurrentUser } from "../utils/auth";
 import { updateProfileApi } from "../services/authService";
+import { sanitizeInput } from "../utils/formValidation";
 
 function EditProfile() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ function EditProfile() {
     setMessage(null);
     setLoading(true);
     try {
-      const payload = { name: name.trim(), email: email.trim() };
+      const payload = { name: sanitizeInput(name), email: sanitizeInput(email) };
       if (password) payload.password = password;
 
       const updated = await updateProfileApi(payload);
