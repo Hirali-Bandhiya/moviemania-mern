@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
-import { getWishlist, removeFromWishlistStore } from "../utils/wishlistHelper";
+import { getWishlist } from "../utils/wishlistHelper";
 import WishlistCard from "../components/WishlistCard";
 import { HeartCrack } from "lucide-react";
 import { useNavigate } from "react-router-dom";

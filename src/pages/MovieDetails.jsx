@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import localData from "../data/movies";
 import { getMovies, getMovieById } from "../services/movieService";
@@ -52,8 +52,9 @@ function MovieDetails() {
 
       try {
         const { data } = await getMovieById(id);
-        if (active && data) {
-          setMovie(data);
+        const fetchedMovie = data?.data || data;
+        if (active && fetchedMovie && (fetchedMovie.title || fetchedMovie._id || fetchedMovie.id)) {
+          setMovie(fetchedMovie);
           setLoading(false);
           return;
         }
@@ -63,8 +64,9 @@ function MovieDetails() {
 
       try {
         const { data } = await getSeriesById(id);
-        if (active && data) {
-          setMovie(data);
+        const fetchedSeries = data?.data || data;
+        if (active && fetchedSeries && (fetchedSeries.title || fetchedSeries._id || fetchedSeries.id)) {
+          setMovie(fetchedSeries);
         }
       } catch {
         // local fallback already handled
@@ -80,11 +82,17 @@ function MovieDetails() {
     };
   }, [id]);
 
-  const localFallbackMovie = localData.find((item) => {
-    const sameId = String(item._id || item.id) === String(movie?._id || movie?.id || id);
-    const sameTitle = normalizeText(item.title) === normalizeText(movie?.title);
-    return sameId || sameTitle;
-  });
+  const localFallbackMovie = Array.isArray(localData)
+    ? localData.find((item) => {
+        if (!item) return false;
+        const targetId = String(movie?._id || movie?.id || id || "");
+        const sameId = targetId && String(item._id || item.id || "") === targetId;
+        const movieTitle = movie?.title ? normalizeText(movie.title) : "";
+        const itemTitle = item.title ? normalizeText(item.title) : "";
+        const sameTitle = movieTitle && itemTitle && movieTitle === itemTitle;
+        return sameId || sameTitle;
+      })
+    : null;
 
   const detailMovie = { ...(localFallbackMovie || {}), ...(movie || {}) };
   const movieId = detailMovie?._id || detailMovie?.id || id;
@@ -98,16 +106,24 @@ function MovieDetails() {
   const primaryVideoUrl = resolvePlaybackUrl(detailMovie, localFallbackMovie);
 
   const buildRelatedList = (sourceList) => {
-    const strictMatches = sourceList
+    if (!Array.isArray(sourceList)) return [];
+
+    const validList = sourceList.filter((item) => item && typeof item === "object");
+    const currentGenre = String(detailMovie?.genre || "").toLowerCase();
+    const currentId = String(movieId || "");
+
+    const strictMatches = validList
       .filter((item) => {
-        const sameGenre = String(item.genre || "").toLowerCase() === String(detailMovie.genre || "").toLowerCase();
-        const isSameItem = String(item._id || item.id) !== String(movieId);
-        return sameGenre && isSameItem;
+        const sameGenre = String(item?.genre || "").toLowerCase() === currentGenre;
+        const isSameItem = String(item?._id || item?.id || "") === currentId;
+        return sameGenre && !isSameItem;
       })
       .slice(0, 6);
 
     if (strictMatches.length > 0) return strictMatches;
-    return sourceList.filter((item) => String(item._id || item.id) !== String(movieId)).slice(0, 6);
+    return validList
+      .filter((item) => String(item?._id || item?.id || "") !== currentId)
+      .slice(0, 6);
   };
 
   useEffect(() => {
@@ -119,18 +135,6 @@ function MovieDetails() {
     setIsUserLoggedIn(isLoggedIn());
     setUserHasActivePlan(hasActivePlan());
   }, []);
-
-  useEffect(() => {
-    if (!loading && requiresPlan && !hasActivePlan()) {
-      navigate("/plans", {
-        replace: true,
-        state: {
-          movieId,
-          paymentOrigin: isLoggedIn() ? "subscription" : "guest",
-        },
-      });
-    }
-  }, [loading, requiresPlan, movieId, navigate]);
 
   useEffect(() => {
     let active = true;
@@ -174,11 +178,13 @@ function MovieDetails() {
     }
   };
 
+  const effectiveMovie = movie || (detailMovie?.title ? detailMovie : null);
+
   if (loading) {
     return <LoadingSpinner className="min-h-screen bg-black text-white" />;
   }
 
-  if (!movie) {
+  if (!effectiveMovie) {
     return (
       <EmptyState
         message="Movie/Series Not Founded..."

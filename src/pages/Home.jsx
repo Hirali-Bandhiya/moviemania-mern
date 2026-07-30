@@ -74,8 +74,6 @@ function Home() {
     (category === "All" || movie.genre === category)
   );
 
-  console.log(`📊 Filtering: ${movies.length} total movies → ${filteredMovies.length} filtered (search: "${search}", category: "${category}")`);
-
   return (
     <div className="bg-black text-white min-h-screen">
 

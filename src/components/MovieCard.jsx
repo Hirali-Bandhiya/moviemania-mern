@@ -22,13 +22,15 @@ function MovieCard({ movie, requirePlanForAccess = false, onRemoveFromContinue =
   const [inUserWishlist, setInUserWishlist] = useState(false);
   const [imageError, setImageError] = useState(false);
 
+  if (!movie) return null;
+
   const defaultImage = "https://via.placeholder.com/300x400?text=No+Image";
   const primaryImage = movie.image || movie.posterUrl;
   const imageUrl = imageError ? defaultImage : getImageUrl(primaryImage);
   const movieId = movie._id || movie.id;
-  const needsPlan = requiresSubscriptionForContent(movie);
 
   useEffect(() => {
+    if (!movieId) return;
     const watchlist = getWatchlist();
 
     setIsInWatchlist(
@@ -44,16 +46,6 @@ function MovieCard({ movie, requirePlanForAccess = false, onRemoveFromContinue =
       return;
     }
 
-    if (needsPlan && !hasActivePlan()) {
-      navigate("/plans", {
-        state: {
-          movieId,
-          paymentOrigin: isLoggedIn() ? "subscription" : "guest",
-        },
-      });
-      return;
-    }
-
     navigate(`/movie/${movieId}`);
   };
 
@@ -62,16 +54,6 @@ function MovieCard({ movie, requirePlanForAccess = false, onRemoveFromContinue =
 
     if (!movieId) {
       alert("Content not available");
-      return;
-    }
-
-    if (needsPlan && !hasActivePlan()) {
-      navigate("/plans", {
-        state: {
-          movieId,
-          paymentOrigin: isLoggedIn() ? "subscription" : "guest",
-        },
-      });
       return;
     }
 

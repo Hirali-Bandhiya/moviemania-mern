@@ -3,7 +3,6 @@
 // ---------- MOVIE IMAGES ----------
 import interstellar from "../assets/images/interstellar.jpg";
 import darkknight from "../assets/images/darkknight.jpg";
-import rrr from "../assets/images/rrr.jpg";
 import idiots from "../assets/images/3idiots.jpg";
 import inception from "../assets/images/inception.jpg";
 import avengers from "../assets/images/avengers.jpg";

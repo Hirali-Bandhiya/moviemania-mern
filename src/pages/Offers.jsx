@@ -22,10 +22,6 @@ function Offers() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    console.log(offers);
-  }, [offers]);
-
   const handleOfferClick = (offer) => {
     if (!isLoggedIn()) {
       navigate("/register");

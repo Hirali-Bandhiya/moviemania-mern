@@ -11,13 +11,6 @@ function ProtectedRoute({
   const loggedIn = isLoggedIn();
   const activePlan = hasActivePlan();
 
-  console.log("[ROUTE] ProtectedRoute check", {
-    path: location.pathname,
-    requirePlan,
-    loggedIn,
-    activePlan,
-  });
-
   if (!loggedIn) {
     return <Navigate to={unauthenticatedRedirect} state={unauthenticatedState || { from: location.pathname }} replace />;
   }
