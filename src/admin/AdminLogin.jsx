@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser, logout } from "../utils/auth";
+import { loginUser, logout, isAdminUser } from "../utils/auth";
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -13,17 +13,11 @@ function AdminLogin() {
   const [loginError, setLoginError] = useState("");
 
   const validate = () => {
-    const newErrors = {};
-    if (!form.email) {
-      newErrors.email = "Email cannot be blank";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = "Enter valid email";
-    }
-    if (!form.password) {
-      newErrors.password = "Password cannot be blank";
-    } else if (form.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
+    let newErrors = {};
+
+    if (!form.email) newErrors.email = "Email cannot be blank.";
+    if (!form.password) newErrors.password = "Password cannot be blank.";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -39,7 +33,7 @@ function AdminLogin() {
       setLoginError(result.message || "Invalid admin credentials");
       return;
     }
-    if (result.user?.isAdmin === true || result.user?.role === "Admin") {
+    if (isAdminUser(result.user)) {
       navigate("/admin");
     } else {
       logout();

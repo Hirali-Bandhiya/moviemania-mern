@@ -1,6 +1,7 @@
 import { loginApi, paymentSuccessApi, registerApi } from "../services/authService";
 import { STORAGE_KEYS } from "../constants/storageKeys";
 import { secureStorage } from "./secureStorage";
+import { isAdminUser as checkIsAdmin } from "./accessControl";
 
 const TOKEN_KEY = STORAGE_KEYS.TOKEN;
 const USER_KEY = STORAGE_KEYS.CURRENT_USER;
@@ -83,8 +84,7 @@ export const getCurrentUser = () => {
 };
 
 export const isAdminUser = (user = getCurrentUser()) => {
-  if (!user) return false;
-  return user.isAdmin === true || user.role === "Admin" || user.role === "admin";
+  return checkIsAdmin(user);
 };
 
 export const isLoggedIn = () => {
