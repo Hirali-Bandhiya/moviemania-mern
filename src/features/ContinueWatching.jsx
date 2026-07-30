@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import movies from "../data/movies";
 import MovieCard from "../components/MovieCard";
 import { mapContinueMovies, removeContinueWatching } from "../utils/continueWatching";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
 function ContinueWatching() {
   const [continueWatching, setContinueWatching] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
     setIsLoggedIn(!!token);
   }, []);
 

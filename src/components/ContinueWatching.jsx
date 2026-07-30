@@ -2,18 +2,19 @@ import { useState, useEffect } from "react";
 import movies from "../data/movies";
 import MovieCard from "./MovieCard";
 import { removeContinueWatching } from "../utils/continueWatching";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
 function ContinueWatching() {
   const [continueWatching, setContinueWatching] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
     setIsLoggedIn(!!token);
   }, []);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("continueWatching") || "[]");
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.CONTINUE_WATCHING) || "[]");
     const mapped = stored.map((item) => {
       const movie = movies.find((m) => m._id === item.movieId || m.id === item.movieId);
       return movie ? { ...movie, progress: item.progress } : null;

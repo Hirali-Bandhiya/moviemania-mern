@@ -12,4 +12,11 @@ export const STORAGE_KEYS = {
   SELECTED_PLAN: "selectedPlan",
   PENDING_PLAN: "pendingPlanSelection",
   PAYMENT_STATUS: "paymentStatus",
+  PAYMENT_HISTORY: "paymentHistory",
+  MY_LIST: "myList",
 };
+
+export const SESSION_STORAGE_KEYS = {
+  REDIRECT_PATH: "redirectPath",
+};
+

@@ -27,3 +27,10 @@ export const ROUTES = {
   ADMIN_OFFERS: "/admin/offers",
   ADMIN_PAYMENTS: "/admin/payments",
 };
+
+export const ROUTE_HELPERS = {
+  MOVIE_DETAILS: (id) => `/movie/${id}`,
+  WATCH_MOVIE: (id) => `/watch/${id}`,
+  RESET_PASSWORD: (token) => `/reset-password/${token}`,
+};
+

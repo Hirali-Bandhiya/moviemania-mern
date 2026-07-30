@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMyPayments } from "../services/paymentService";
 import { formatDate } from "../utils/formatters";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
 function PaymentHistory() {
   const [history, setHistory] = useState([]);
@@ -17,7 +18,7 @@ function PaymentHistory() {
           setHistory(Array.isArray(data) ? data : []);
         }
       } catch {
-        const stored = JSON.parse(localStorage.getItem("paymentHistory") || "[]");
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.PAYMENT_HISTORY) || "[]");
         if (active) {
           setHistory(Array.isArray(stored) ? stored : []);
         }

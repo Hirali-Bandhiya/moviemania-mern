@@ -1,23 +1,24 @@
 import { useState, useEffect } from "react";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
 function AddToMyListButton({ movie }) {
   const [isInList, setIsInList] = useState(false);
   const movieId = movie._id;
 
   useEffect(() => {
-    const myList = JSON.parse(localStorage.getItem("myList") || "[]");
+    const myList = JSON.parse(localStorage.getItem(STORAGE_KEYS.MY_LIST) || "[]");
     setIsInList(myList.some((item) => item._id === movieId));
   }, [movieId]);
 
   const handleClick = () => {
-    const myList = JSON.parse(localStorage.getItem("myList") || "[]");
+    const myList = JSON.parse(localStorage.getItem(STORAGE_KEYS.MY_LIST) || "[]");
     if (isInList) {
       const updated = myList.filter((item) => item._id !== movieId);
-      localStorage.setItem("myList", JSON.stringify(updated));
+      localStorage.setItem(STORAGE_KEYS.MY_LIST, JSON.stringify(updated));
       setIsInList(false);
     } else {
       myList.push(movie);
-      localStorage.setItem("myList", JSON.stringify(myList));
+      localStorage.setItem(STORAGE_KEYS.MY_LIST, JSON.stringify(myList));
       setIsInList(true);
     }
   };

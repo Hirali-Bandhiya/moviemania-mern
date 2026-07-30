@@ -14,6 +14,7 @@ import {
   removeFromWishlistStore,
   isInWishlistStore
 } from "../features/wishlist/utils/wishlistHelper";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
 function MovieCard({ movie, requirePlanForAccess = false, onRemoveFromContinue = null }) {
   const navigate = useNavigate();
@@ -129,7 +130,7 @@ function MovieCard({ movie, requirePlanForAccess = false, onRemoveFromContinue =
         </p>
 
         {/* Wishlist */}
-        {!!localStorage.getItem("token") && (
+        {!!localStorage.getItem(STORAGE_KEYS.TOKEN) && (
           <button
             onClick={(e) => {
               e.stopPropagation();

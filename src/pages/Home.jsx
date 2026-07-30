@@ -14,6 +14,7 @@ import localMoviesData from "../data/movies";
 
 import { mapContinueMovies, removeContinueWatching } from "../utils/continueWatching";
 import { mapRecentlyWatched } from "../utils/history";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
 function Home() {
   const [movies, setMovies] = useState([]);
@@ -58,7 +59,7 @@ function Home() {
 
   // ✅ Check if user is logged in
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
     setIsLoggedIn(!!token);
   }, []);
 

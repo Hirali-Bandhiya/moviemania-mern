@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import movies from "../data/movies";
 import { getMovies, getMovieById } from "../services/movieService";

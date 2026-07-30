@@ -1,12 +1,13 @@
 import { useParams } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import movies from "../data/movies";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
 function WatchFullMovie() {
   const { id } = useParams();
   const movie = movies.find((m) => m.id === parseInt(id, 10));
 
-  const subscriptionPlan = localStorage.getItem("subscriptionPlan");
+  const subscriptionPlan = localStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_PLAN);
 
   if (!subscriptionPlan) {
     return <Navigate to="/plans" replace />;
