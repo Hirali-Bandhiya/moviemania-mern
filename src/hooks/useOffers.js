@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getOffers, getAdminOffers } from "../services/offerService";
+import { logger } from "../utils/logger";
 
 export const useOffers = (isAdmin = false) => {
   const [offers, setOffers] = useState([]);
@@ -17,7 +18,7 @@ export const useOffers = (isAdmin = false) => {
       setError("");
       return rawData;
     } catch (err) {
-      console.error("Failed to load offers", err);
+      logger.error("Failed to load offers", err);
       setOffers([]);
       setError("Failed to load offers. Please try again.");
       return [];

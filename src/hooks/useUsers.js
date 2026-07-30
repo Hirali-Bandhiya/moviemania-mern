@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getUsers } from "../services/userService";
+import { logger } from "../utils/logger";
 
 export const useUsers = () => {
   const [users, setUsers] = useState([]);
@@ -15,7 +16,7 @@ export const useUsers = () => {
       setError("");
       return data;
     } catch (err) {
-      console.error("Failed to fetch users", err);
+      logger.error("Failed to fetch users", err);
       setUsers([]);
       setError("Failed to fetch users");
       return [];

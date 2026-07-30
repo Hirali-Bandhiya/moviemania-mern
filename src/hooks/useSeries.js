@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getSeries } from "../services/seriesService";
+import { logger } from "../utils/logger";
 
 export const useSeries = () => {
   const [seriesList, setSeriesList] = useState([]);
@@ -17,7 +18,7 @@ export const useSeries = () => {
       setError("");
       return seriesOnly;
     } catch (err) {
-      console.error("[API] Failed to load series", err);
+      logger.error("[API] Failed to load series", err);
       setSeriesList([]);
       setError("Failed to load series. Please try again.");
       return [];

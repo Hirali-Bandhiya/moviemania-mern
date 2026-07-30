@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getMovies } from "../services/movieService";
+import { logger } from "../utils/logger";
 
 export const useMovies = () => {
   const [movies, setMovies] = useState([]);
@@ -18,7 +19,7 @@ export const useMovies = () => {
       setError("");
       return moviesOnly;
     } catch (err) {
-      console.warn("[API] Failed to fetch movies", err?.message || err);
+      logger.warn("[API] Failed to fetch movies", err?.message || err);
       setMovies([]);
       setError("Failed to load movies. Please try again.");
       return [];

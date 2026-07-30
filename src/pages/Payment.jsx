@@ -7,6 +7,7 @@ import {
   normalizePlanSelection,
   readPendingPlanSelection,
 } from "../utils/planSelection";
+import { logger } from "../utils/logger";
 // icons removed (scan UI removed)
 
 const RAZORPAY_SCRIPT_ID = "razorpay-checkout-script";
@@ -138,7 +139,7 @@ function Payment() {
         // If running on localhost, allow a safe mock fallback for local testing
         const isLocal = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
         if (isLocal) {
-          console.warn("Invalid payment init response — using local mock fallback.", data);
+          logger.warn("Invalid payment init response — using local mock fallback.", data);
           const mockPaymentId = `pay_mock_${Date.now()}`;
           const paymentResult = await verifyPayment({
             orderId: `order_mock_${Date.now()}`,
@@ -199,7 +200,7 @@ function Payment() {
         },
         handler: async (response) => {
           try {
-            console.log("Razorpay payment response:", response);
+            logger.info("Razorpay payment response received");
             const paymentResult = await verifyPayment({
               orderId: response.razorpay_order_id,
               paymentId: response.razorpay_payment_id,
@@ -228,7 +229,7 @@ function Payment() {
               }
             }, SUCCESS_REDIRECT_DELAY_MS);
           } catch (error) {
-            console.error("Payment verification failed:", error);
+            logger.error("Payment verification failed:", error);
             setErrorMessage(error?.response?.data?.message || error.message || "Payment verification failed. Please try again.");
             setLoading(false);
             setCheckoutGlow(false);
@@ -240,12 +241,12 @@ function Payment() {
       try {
         razorpay = new window.Razorpay(options);
       } catch (err) {
-        console.error("Failed to create Razorpay instance:", err);
+        logger.error("Failed to create Razorpay instance:", err);
         throw new Error("Razorpay checkout is unavailable in this browser.");
       }
 
       razorpay.on("payment.failed", (response) => {
-        console.error("Razorpay payment failed:", response?.error || response);
+        logger.error("Razorpay payment failed:", response?.error || response);
         setErrorMessage(response?.error?.description || "Payment failed. Please try again.");
         setLoading(false);
         setCheckoutGlow(false);
@@ -254,11 +255,11 @@ function Payment() {
       try {
         razorpay.open();
       } catch (err) {
-        console.error("Error opening Razorpay checkout:", err);
+        logger.error("Error opening Razorpay checkout:", err);
         throw new Error("Unable to open Razorpay checkout. Please try again.");
       }
     } catch (error) {
-      console.error("Failed to start payment:", error);
+      logger.error("Failed to start payment:", error);
       const backendMessage = error?.response?.data?.message || error.message || "Unable to start payment.";
       // Do not fallback to non-Razorpay payment methods here.
       setErrorMessage(backendMessage);

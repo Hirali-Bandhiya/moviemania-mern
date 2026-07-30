@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getPlans } from "../services/planService";
+import { logger } from "../utils/logger";
 
 export const usePlans = () => {
   const [plans, setPlans] = useState([]);
@@ -17,7 +18,7 @@ export const usePlans = () => {
       setError("");
       return rawData;
     } catch (err) {
-      console.error("Failed to load plans", err);
+      logger.error("Failed to load plans", err);
       setPlans([]);
       setError("Failed to load plans.");
       return [];
