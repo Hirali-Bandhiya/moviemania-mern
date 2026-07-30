@@ -1,16 +1,14 @@
 import { syncWishlistApi } from "../services/userService";
 import { isLoggedIn } from "./auth";
 import { STORAGE_KEYS } from "../constants/storageKeys";
+import { secureStorage } from "./secureStorage";
 
 export const getWatchlist = () => {
-  const currentUser = JSON.parse(localStorage.getItem(STORAGE_KEYS.CURRENT_USER));
+  const currentUser = secureStorage.getItemJSON(STORAGE_KEYS.CURRENT_USER);
   if (currentUser && currentUser.wishlist) {
-    // Basic local sync tracking since we want UI fast
-    let list = localStorage.getItem(STORAGE_KEYS.WATCHLIST);
-    return list ? JSON.parse(list) : [];
+    return secureStorage.getItemJSON(STORAGE_KEYS.WATCHLIST, []);
   }
-  const list = localStorage.getItem(STORAGE_KEYS.WATCHLIST);
-  return list ? JSON.parse(list) : [];
+  return secureStorage.getItemJSON(STORAGE_KEYS.WATCHLIST, []);
 };
 
 export const syncWatchlistToBackend = async (movieId) => {
@@ -28,13 +26,13 @@ export const addToWatchlist = (movie) => {
   const exists = list.find((item) => (item._id || item.id) === movieId);
   if (!exists) {
     list.push(movie);
-    localStorage.setItem(STORAGE_KEYS.WATCHLIST, JSON.stringify(list));
+    secureStorage.setItemJSON(STORAGE_KEYS.WATCHLIST, list);
     syncWatchlistToBackend(movieId);
   }
 };
 
 export const removeFromWatchlist = (id) => {
   const list = getWatchlist().filter((movie) => (movie._id || movie.id) !== id);
-  localStorage.setItem(STORAGE_KEYS.WATCHLIST, JSON.stringify(list));
+  secureStorage.setItemJSON(STORAGE_KEYS.WATCHLIST, list);
   syncWatchlistToBackend(id);
-};
+};

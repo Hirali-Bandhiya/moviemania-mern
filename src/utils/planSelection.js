@@ -1,11 +1,12 @@
 import { STORAGE_KEYS } from "../constants/storageKeys";
+import { secureStorage } from "./secureStorage";
 
 const PENDING_PLAN_KEY = STORAGE_KEYS.PENDING_PLAN;
 const SELECTED_PLAN_KEY = STORAGE_KEYS.SELECTED_PLAN;
 
 const safeParse = (value) => {
   try {
-    return value ? JSON.parse(value) : null;
+    return value ? (typeof value === "object" ? value : JSON.parse(value)) : null;
   } catch {
     return null;
   }
@@ -72,20 +73,20 @@ export const storePendingPlanSelection = (planInput) => {
     return null;
   }
 
-  localStorage.setItem(SELECTED_PLAN_KEY, normalizedPlan.planId || normalizedPlan.name || "");
-  localStorage.setItem(PENDING_PLAN_KEY, JSON.stringify(normalizedPlan));
+  secureStorage.setItem(SELECTED_PLAN_KEY, normalizedPlan.planId || normalizedPlan.name || "");
+  secureStorage.setItemJSON(PENDING_PLAN_KEY, normalizedPlan);
 
   return normalizedPlan;
 };
 
 export const readPendingPlanSelection = (fallback = null) => {
-  const storedPlan = safeParse(localStorage.getItem(PENDING_PLAN_KEY));
-  return normalizePlanSelection(fallback || storedPlan || localStorage.getItem(SELECTED_PLAN_KEY));
+  const storedPlan = safeParse(secureStorage.getItemJSON(PENDING_PLAN_KEY));
+  return normalizePlanSelection(fallback || storedPlan || secureStorage.getItem(SELECTED_PLAN_KEY));
 };
 
 export const clearPendingPlanSelection = () => {
-  localStorage.removeItem(PENDING_PLAN_KEY);
-  localStorage.removeItem(SELECTED_PLAN_KEY);
+  secureStorage.removeItem(PENDING_PLAN_KEY);
+  secureStorage.removeItem(SELECTED_PLAN_KEY);
 };
 
 export const parsePlanAmount = parseAmount;

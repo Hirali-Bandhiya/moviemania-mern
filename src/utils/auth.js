@@ -1,5 +1,6 @@
 import { loginApi, paymentSuccessApi, registerApi } from "../services/authService";
 import { STORAGE_KEYS } from "../constants/storageKeys";
+import { secureStorage } from "./secureStorage";
 
 const TOKEN_KEY = STORAGE_KEYS.TOKEN;
 const USER_KEY = STORAGE_KEYS.CURRENT_USER;
@@ -7,7 +8,7 @@ const CHECKOUT_PENDING_KEY = STORAGE_KEYS.CHECKOUT_PENDING;
 
 export const safeParse = (value) => {
   try {
-    return value ? JSON.parse(value) : null;
+    return value ? (typeof value === "object" ? value : JSON.parse(value)) : null;
   } catch {
     return null;
   }
@@ -28,7 +29,13 @@ export const isTokenExpired = (token) => {
   return false;
 };
 
-export const getAuthToken = () => localStorage.getItem(TOKEN_KEY);
+export const getAuthToken = () => secureStorage.getItem(TOKEN_KEY);
+
+const sanitizeUserForStorage = (userData) => {
+  if (!userData || typeof userData !== "object") return {};
+  const { password, confirmPassword, ...safeUser } = userData;
+  return safeUser;
+};
 
 export const setAuthSession = (userData) => {
   if (!userData) return;
@@ -36,11 +43,12 @@ export const setAuthSession = (userData) => {
   const { token, ...user } = userData;
 
   if (token) {
-    localStorage.setItem(TOKEN_KEY, token);
+    secureStorage.setItem(TOKEN_KEY, token);
   }
 
-  if (Object.keys(user).length > 0) {
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
+  const safeUser = sanitizeUserForStorage(user);
+  if (Object.keys(safeUser).length > 0) {
+    secureStorage.setItemJSON(USER_KEY, safeUser);
   }
 };
 
@@ -48,29 +56,30 @@ export const updateCurrentUser = (partial) => {
   const current = getCurrentUser();
   if (!current) return null;
 
-  const updated = { ...current, ...partial };
-  localStorage.setItem(USER_KEY, JSON.stringify(updated));
+  const updated = sanitizeUserForStorage({ ...current, ...partial });
+  secureStorage.setItemJSON(USER_KEY, updated);
   return updated;
 };
 
 export const logout = () => {
-  localStorage.removeItem(USER_KEY);
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(CHECKOUT_PENDING_KEY);
+  secureStorage.removeItem(USER_KEY);
+  secureStorage.removeItem(TOKEN_KEY);
+  secureStorage.removeItem(CHECKOUT_PENDING_KEY);
 };
 
 export const markCheckoutPending = () => {
-  localStorage.setItem(CHECKOUT_PENDING_KEY, "true");
+  secureStorage.setItem(CHECKOUT_PENDING_KEY, "true");
 };
 
 export const clearCheckoutPending = () => {
-  localStorage.removeItem(CHECKOUT_PENDING_KEY);
+  secureStorage.removeItem(CHECKOUT_PENDING_KEY);
 };
 
-export const isCheckoutPending = () => localStorage.getItem(CHECKOUT_PENDING_KEY) === "true";
+export const isCheckoutPending = () => secureStorage.getItem(CHECKOUT_PENDING_KEY) === "true";
 
 export const getCurrentUser = () => {
-  return safeParse(localStorage.getItem(USER_KEY));
+  const data = secureStorage.getItemJSON(USER_KEY);
+  return safeParse(data);
 };
 
 export const isAdminUser = (user = getCurrentUser()) => {
@@ -137,7 +146,7 @@ const getSubscriptionExpiry = (user) => {
     user?.subscriptionExpiry ||
     user?.subscriptionEndDate ||
     user?.currentSubscription?.expiresAt ||
-    localStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_END_DATE) ||
+    secureStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_END_DATE) ||
     null
   );
 };
@@ -158,8 +167,8 @@ export const hasSubscription = () => {
 
 export const hasActivePlan = () => {
   const user = getCurrentUser();
-  const savedPlan = localStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_PLAN);
-  const paymentStatus = localStorage.getItem(STORAGE_KEYS.PAYMENT_STATUS);
+  const savedPlan = secureStorage.getItem(STORAGE_KEYS.SUBSCRIPTION_PLAN);
+  const paymentStatus = secureStorage.getItem(STORAGE_KEYS.PAYMENT_STATUS);
   const expiryDate = getSubscriptionExpiry(user);
 
   // Honor the backend subscription flag, but still expire access when the date is in the past.
