@@ -1,21 +1,44 @@
 import api from "./api";
+import { API_ENDPOINTS } from "../config/api.config";
+import { extractErrorMessage } from "./apiError";
 
 export const getSeries = async () => {
-  return await api.get("/series");
+  try {
+    return await api.get(API_ENDPOINTS.SERIES.BASE);
+  } catch (error) {
+    throw new Error(extractErrorMessage(error, "Failed to fetch series"));
+  }
 };
 
 export const getSeriesById = async (id) => {
-  return await api.get(`/series/${id}`);
+  try {
+    return await api.get(`${API_ENDPOINTS.SERIES.BASE}/${id}`);
+  } catch (error) {
+    throw new Error(extractErrorMessage(error, "Failed to fetch series details"));
+  }
 };
 
 export const createSeries = async (payload) => {
-  return await api.post("/series", payload);
+  try {
+    return await api.post(API_ENDPOINTS.SERIES.BASE, payload);
+  } catch (error) {
+    throw new Error(extractErrorMessage(error, "Failed to create series"));
+  }
 };
 
 export const updateSeries = async (id, payload) => {
-  return await api.put(`/series/${id}`, payload);
+  try {
+    return await api.put(`${API_ENDPOINTS.SERIES.BASE}/${id}`, payload);
+  } catch (error) {
+    throw new Error(extractErrorMessage(error, "Failed to update series"));
+  }
 };
 
 export const deleteSeries = async (id) => {
-  return await api.delete(`/series/${id}`);
+  try {
+    return await api.delete(`${API_ENDPOINTS.SERIES.BASE}/${id}`);
+  } catch (error) {
+    throw new Error(extractErrorMessage(error, "Failed to delete series"));
+  }
 };
+
